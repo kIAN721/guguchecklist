@@ -33,15 +33,14 @@ import {
 // 1. FIREBASE CONFIGURATION
 // ======================================
 
-// Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCW4hXkBZwElR2FmvqiOyRbETzyiXrXips",
-    authDomain: "my-little-guguchecklist.firebaseapp.com",
-    projectId: "my-little-guguchecklist",
-    storageBucket: "my-little-guguchecklist.firebasestorage.app",
-    messagingSenderId: "630691137594",
-    appId: "1:630691137594:web:74823b1c884ef29e1f0d03"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCW4hXkBZwElR2FmvqiOyRbETzyiXrXips",
+  authDomain: "my-little-guguchecklist.firebaseapp.com",
+  projectId: "my-little-guguchecklist",
+  storageBucket: "my-little-guguchecklist.firebasestorage.app",
+  messagingSenderId: "630691137594",
+  appId: "1:630691137594:web:74823b1c884ef29e1f0d03"
+};
 
 const app = initializeApp(firebaseConfig);
 
