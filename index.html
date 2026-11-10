@@ -4,109 +4,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f8f3ec">
 
   <title>My Little Dorm Checklist</title>
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="container">
+  <main class="container">
 
     <header>
       <div class="top">
         <span>MY LITTLE CHECKLIST</span>
-        <span>♡</span>
+        <span class="heart">♡</span>
       </div>
 
       <h1>A little home away from home.</h1>
 
       <p class="subtitle">
-        Everything you need for your 7–10 day stay.
+        Everything you need for your stay.
         Take your time. Don't forget anything. ♡
       </p>
     </header>
 
-    <section class="card">
-      <div class="progress-header">
-        <strong>Your packing progress</strong>
-        <span id="percentage">0%</span>
-      </div>
+    <!-- LOGIN SCREEN -->
+    <section id="loginScreen" class="card login-screen">
+      <div class="login-icon">♡</div>
+      <h2>Your little checklist awaits.</h2>
+      <p class="muted">
+        Sign in with Google to create or join your shared checklist.
+      </p>
 
-      <div class="progress-track">
-        <div class="progress-fill" id="progress"></div>
-      </div>
-
-      <p id="progressText">0 of 0 items completed</p>
-    </section>
-
-    <div class="toolbar">
-      <input
-        type="search"
-        id="search"
-        placeholder="Search your items..."
-      >
-
-      <button class="primary" onclick="openModal()">
-        + Add item
+      <button id="googleBtn" class="primary full-btn">
+        Continue with Google
       </button>
-    </div>
-
-    <nav class="categories" id="categories"></nav>
-
-    <section class="card">
-      <div class="section-title">
-        <strong id="listTitle">Your checklist</strong>
-        <span id="itemCount"></span>
-      </div>
-
-      <div id="list"></div>
-    </section>
-
-    <section class="card">
-      <h3>Your checklist tools</h3>
-
-      <div class="toolbar">
-        <button onclick="resetChecks()">Reset progress</button>
-        <button onclick="exportList()">Download list</button>
-        <button onclick="window.print()">Print checklist</button>
-      </div>
 
       <p class="small">
-        Your changes are automatically saved in this browser.
+        You and your roommate can use separate Google accounts.
       </p>
     </section>
+
+    <!-- MAIN APP -->
+    <section id="appScreen" hidden>
+
+      <div class="user-bar card">
+        <div class="user-info">
+          <img id="userAvatar" alt="Profile">
+          <div>
+            <strong id="userName">Welcome</strong>
+            <p id="userEmail" class="small"></p>
+          </div>
+        </div>
+
+        <button id="signOutBtn" class="text-btn">
+          Sign out
+        </button>
+      </div>
+
+      <!-- ROOM SETUP -->
+      <section id="roomSetup" class="card" hidden>
+        <h2>Your shared space ♡</h2>
+        <p class="muted">
+          Create a new checklist or join an existing one.
+        </p>
+
+        <button id="createRoomBtn" class="primary full-btn">
+          + Create a new checklist
+        </button>
+
+        <div class="or-divider">OR</div>
+
+        <label for="roomCodeInput">Join using a room code</label>
+
+        <input
+          id="roomCodeInput"
+          type="text"
+          placeholder="Enter your room code"
+          autocomplete="off"
+        >
+
+        <button id="joinRoomBtn" class="secondary full-btn">
+          Join shared checklist
+        </button>
+
+        <p class="small">
+          Ask the checklist owner to send you their invitation link or code.
+        </p>
+      </section>
+
+      <!-- CHECKLIST DASHBOARD -->
+      <section id="dashboard" hidden>
+
+        <div class="card room-info">
+          <div>
+            <span class="eyebrow">YOUR SHARED SPACE</span>
+            <h2>Our little checklist ♡</h2>
+            <p id="roomCodeDisplay" class="small"></p>
+          </div>
+
+          <div class="room-actions">
+            <button id="shareBtn" class="secondary">
+              Share ↗
+            </button>
+
+            <button id="leaveRoomBtn" class="text-btn">
+              Leave
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="card">
+          <div class="progress-header">
+            <strong>Packing progress</strong>
+            <span id="percentage">0%</span>
+          </div>
+
+          <div class="progress-track">
+            <div id="progress" class="progress-fill"></div>
+          </div>
+
+          <p id="progressText" class="small">
+            0 of 0 items completed
+          </p>
+        </div>
+
+        <!-- Search and add -->
+        <div class="toolbar">
+          <input
+            type="search"
+            id="search"
+            placeholder="Search your items..."
+          >
+
+          <button id="addBtn" class="primary">
+            + Add item
+          </button>
+        </div>
+
+        <!-- Categories -->
+        <nav id="categories" class="categories"></nav>
+
+        <!-- Checklist -->
+        <div class="card">
+          <div class="section-title">
+            <strong id="listTitle">Your checklist</strong>
+            <span id="itemCount" class="small"></span>
+          </div>
+
+          <div id="list"></div>
+        </div>
+
+        <!-- Activity -->
+        <div class="card">
+          <h3>Room activity</h3>
+          <p id="activityText" class="small">
+            Waiting for updates...
+          </p>
+
+          <div class="toolbar">
+            <button id="resetBtn" class="secondary">
+              Reset progress
+            </button>
+
+            <button id="downloadBtn" class="secondary">
+              Download list
+            </button>
+
+            <button id="printBtn" class="secondary">
+              Print
+            </button>
+          </div>
+        </div>
+
+      </section>
+    </section>
+
+    <div id="status" class="status" role="status"></div>
 
     <footer>
       Made with care, just for you ♡
     </footer>
 
-  </div>
+  </main>
 
-  <!-- Add/Edit Modal -->
-  <div class="modal" id="modal">
+  <!-- ADD / EDIT MODAL -->
+  <div id="modal" class="modal">
     <div class="modal-box">
 
       <h2 id="modalTitle">Add a new item</h2>
 
+      <label for="itemInput">Item name</label>
+
       <input
-        type="text"
         id="itemInput"
+        type="text"
         placeholder="What do you need?"
+        maxlength="100"
       >
+
+      <label for="categoryInput">Category</label>
 
       <select id="categoryInput"></select>
 
       <div class="modal-actions">
-        <button onclick="closeModal()">Cancel</button>
-        <button class="primary" onclick="saveItem()">Save item</button>
+        <button id="cancelBtn" class="secondary">
+          Cancel
+        </button>
+
+        <button id="saveBtn" class="primary">
+          Save item
+        </button>
       </div>
 
     </div>
   </div>
 
-  <script src="js/script.js"></script>
+  <script type="module" src="script.js"></script>
 
 </body>
 </html>
