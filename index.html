@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My Little Dorm Checklist</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <header>
+      <div class="top">
+        <span>MY LITTLE CHECKLIST</span>
+        <span>♡</span>
+      </div>
+
+      <h1>A little home away from home.</h1>
+
+      <p class="subtitle">
+        Everything you need for your 7–10 day stay.
+        Take your time. Don't forget anything. ♡
+      </p>
+    </header>
+
+    <section class="card">
+      <div class="progress-header">
+        <strong>Your packing progress</strong>
+        <span id="percentage">0%</span>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progress"></div>
+      </div>
+
+      <p id="progressText">0 of 0 items completed</p>
+    </section>
+
+    <div class="toolbar">
+      <input
+        type="search"
+        id="search"
+        placeholder="Search your items..."
+      >
+
+      <button class="primary" onclick="openModal()">
+        + Add item
+      </button>
+    </div>
+
+    <nav class="categories" id="categories"></nav>
+
+    <section class="card">
+      <div class="section-title">
+        <strong id="listTitle">Your checklist</strong>
+        <span id="itemCount"></span>
+      </div>
+
+      <div id="list"></div>
+    </section>
+
+    <section class="card">
+      <h3>Your checklist tools</h3>
+
+      <div class="toolbar">
+        <button onclick="resetChecks()">Reset progress</button>
+        <button onclick="exportList()">Download list</button>
+        <button onclick="window.print()">Print checklist</button>
+      </div>
+
+      <p class="small">
+        Your changes are automatically saved in this browser.
+      </p>
+    </section>
+
+    <footer>
+      Made with care, just for you ♡
+    </footer>
+
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+
+      <h2 id="modalTitle">Add a new item</h2>
+
+      <input
+        type="text"
+        id="itemInput"
+        placeholder="What do you need?"
+      >
+
+      <select id="categoryInput"></select>
+
+      <div class="modal-actions">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="primary" onclick="saveItem()">Save item</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+
+</body>
+</html>
