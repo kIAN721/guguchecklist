@@ -30,11 +30,11 @@ const db = initializeFirestore(app, {
 });
 
 const sharedDocRef = doc(db, "rooms", "gugu_shared_main");
-const STORAGE_KEY = "gugu_dorm_checklist_v2";
+const STORAGE_KEY = "gugu_dorm_checklist_v4";
 
 
 // ======================================
-// 2. CATEGORIES & YOUR 59 DEFAULT ITEMS
+// 2. CATEGORIES & YOUR CUSTOM DEFAULT ITEMS
 // ======================================
 
 const categoryNames = [
@@ -45,82 +45,83 @@ const categoryNames = [
   "Daily necessities",
   "Documents & money",
   "Health & safety",
-  "Shared room"
+  "Foods"
 ];
 
 const starterItems = [
-  ["Bedding", "Mattress / sleeping mat"],
-  ["Bedding", "Bedsheet"],
-  ["Bedding", "Pillow"],
-  ["Bedding", "Pillowcase"],
-  ["Bedding", "Blanket"],
-  ["Bedding", "Mosquito net"],
-  ["Bedding", "Small fan"],
+  // Bedding
+  ["Bedding", "ခြင်ထောင် (optional)"],
+  ["Bedding", "ခေါင်းအုံး"],
+  ["Bedding", "ခေါင်းအုံးစွပ်"],
+  ["Bedding", "စောင်"],
+  ["Bedding", "ဖျာ"],
+  ["Bedding", "အိပ်ယာခင်း"],
 
-  ["Clothing", "Everyday clothes"],
-  ["Clothing", "Underwear"],
-  ["Clothing", "Bras"],
-  ["Clothing", "Pajamas"],
-  ["Clothing", "Socks"],
+  // Clothing
   ["Clothing", "Bath towel"],
+  ["Clothing", "Everyday clothes"],
   ["Clothing", "Face towel"],
-  ["Clothing", "Slippers"],
-  ["Clothing", "Shoes"],
-  ["Clothing", "Hangers"],
-  ["Clothing", "Laundry bag"],
+  ["Clothing", "Other personal uses clothes"],
+  ["Clothing", "အင်္ကျီချိတ်"],
+  ["Clothing", "အနွေးထည်ပါးပါး"],
 
-  ["Toiletries", "Toothbrush & toothpaste"],
-  ["Toiletries", "Shampoo & conditioner"],
+  // Toiletries
+  ["Toiletries", "Body lotion"],
   ["Toiletries", "Body wash / soap"],
-  ["Toiletries", "Facial cleanser"],
-  ["Toiletries", "Skincare products"],
-  ["Toiletries", "Moisturizer"],
-  ["Toiletries", "Sunscreen"],
   ["Toiletries", "Comb / hairbrush"],
-  ["Toiletries", "Hair ties & clips"],
-  ["Toiletries", "Deodorant"],
-  ["Toiletries", "Sanitary pads"],
-  ["Toiletries", "Tissue & wet wipes"],
+  ["Toiletries", "Facial cleanser"],
+  ["Toiletries", "Hair ties & clips (အပိုတွေလည်းထည့်သွားပါ)"],
+  ["Toiletries", "Moisturizer"],
+  ["Toiletries", "Other personal body products"],
+  ["Toiletries", "Shampoo & conditioner"],
+  ["Toiletries", "Skincare products"],
+  ["Toiletries", "Sunscreen"],
+  ["Toiletries", "Tissue & Wet Tissues"],
+  ["Toiletries", "Toothbrush & toothpaste"],
 
-  ["Electronics", "Phone"],
-  ["Electronics", "Phone charger"],
-  ["Electronics", "Power bank"],
-  ["Electronics", "Earphones"],
-  ["Electronics", "Extension cord (if permitted)"],
+  // Electronics
+  ["Electronics", "Airpods"],
+  ["Electronics", "Extension cord"],
+  ["Electronics", "Laptop and laptop charger (optional)"],
+  ["Electronics", "Phone and phone charger"],
+  ["Electronics", "Power bank and power bank charger"],
   ["Electronics", "Rechargeable fan"],
+  ["Electronics", "Table lamp and charger"],
 
-  ["Daily necessities", "Water bottle"],
-  ["Daily necessities", "Water cup"],
-  ["Daily necessities", "Umbrella"],
-  ["Daily necessities", "Laundry detergent"],
-  ["Daily necessities", "Small mirror"],
+  // Daily necessities
   ["Daily necessities", "Plastic bags"],
-  ["Daily necessities", "Storage box"],
-  ["Daily necessities", "Reusable shopping bag"],
-  ["Daily necessities", "Spoon and fork"],
-  ["Daily necessities", "Food container"],
+  ["Daily necessities", "ကတ်ကြေး"],
+  ["Daily necessities", "ထီး"],
+  ["Daily necessities", "ပန်းကန် နဲ့ ဇွန်း"],
+  ["Daily necessities", "ပန်းကန်ဆေးဆပ်ပြာနဲ့ ရေမြှုပ်"],
+  ["Daily necessities", "ပလတ်စတစ်ကြိုး"],
+  ["Daily necessities", "မှန်သေးသေးလေး"],
+  ["Daily necessities", "ရေချိုးရန်ရေခွက်"],
+  ["Daily necessities", "ရေခွက် နဲ့ ရေဘူး"],
+  ["Daily necessities", "သော့နဲ့သော့ခလောက် (optional)"],
+  ["Daily necessities", "အဝတ်လျှော်ဆပ်ပြာနဲ့ brush"],
 
-  ["Documents & money", "NRC / identification"],
-  ["Documents & money", "Cash"],
-  ["Documents & money", "Bank card"],
-  ["Documents & money", "Emergency contact numbers"],
+  // Documents & money
+  ["Documents & money", "ကျောင်းသားကဒ်"],
+  ["Documents & money", "စာအုပ်အကြမ်း၊ ကျက်ရမဲ့စာရွက်တွေ"],
+  ["Documents & money", "ပိုက်ဆံ"],
+  ["Documents & money", "ဘောပင်၊ ခဲတံ၊ ခဲဖျက်၊ ခဲဆံ"],
+  ["Documents & money", "အဆောင်မှာနေဖို့ချလန်"],
 
-  ["Health & safety", "Personal medication"],
-  ["Health & safety", "Basic first-aid supplies"],
-  ["Health & safety", "Thermometer"],
-  ["Health & safety", "Face masks"],
-  ["Health & safety", "Hand sanitizer"],
+  // Health & safety
+  ["Health & safety", "Air fresher (optional)"],
+  ["Health & safety", "Basic first-aid supplies (Hansa plast, Betadine, Cotton,...)"],
+  ["Health & safety", "Hand sanitizer (optional)"],
   ["Health & safety", "Insect repellent"],
+  ["Health & safety", "Personal medication (Enervon C, Cetrine, Paracetamol,...)"],
+  ["Health & safety", "ခြင်မကိုက်ဆေးရည်"],
+  ["Health & safety", "ရှူဆေး (optional)"],
 
-  ["Shared room", "Small padlock"],
-  ["Shared room", "Personal laundry basket"],
-  ["Shared room", "Separate toiletries bag"],
-  ["Shared room", "Bedside organizer"],
-  ["Shared room", "Clothes hooks"],
-  ["Shared room", "Headphones"],
-  ["Shared room", "Eye mask"],
-  ["Shared room", "Personal valuables pouch"],
-  ["Shared room", "Trash bags"]
+  // Foods
+  ["Foods", "Instant noodles"],
+  ["Foods", "3-in-1 Coffee / Tea mix"],
+  ["Foods", "Snacks & biscuits"],
+  ["Foods", "Drinking water bottles"]
 ];
 
 
@@ -130,7 +131,7 @@ const starterItems = [
 
 function sortItems(listToSort) {
   listToSort.sort((a, b) => {
-    // 1. Group by category order first (Bedding -> Clothing -> Toiletries...)
+    // 1. Group by category order first
     const catA = categoryNames.indexOf(a.category);
     const catB = categoryNames.indexOf(b.category);
 
@@ -141,12 +142,12 @@ function sortItems(listToSort) {
       return validCatA - validCatB;
     }
 
-    // 2. Inside each category, keep unchecked items above checked items
+    // 2. Keep unchecked items above checked items
     if (Boolean(a.done) !== Boolean(b.done)) {
       return a.done ? 1 : -1;
     }
 
-    // 3. Sort alphabetically by item name (A-Z, 1-9, and Burmese က-အ)
+    // 3. Sort alphabetically by item name
     const nameA = (a.name || "").trim();
     const nameB = (b.name || "").trim();
 
@@ -320,7 +321,6 @@ function renderItems() {
     item.name.toLowerCase().includes(query)
   );
 
-  // Also ensure the filtered view is strictly sorted by category & name
   sortItems(filtered);
 
   $("listTitle").textContent = activeCategory === "All" ? "Your checklist" : activeCategory;
@@ -477,7 +477,7 @@ function saveItem() {
 
 
 // ======================================
-// 9. BUTTONS: SEARCH, RESET, DOWNLOAD, PRINT
+// 9. BUTTONS: SEARCH, UNCHECK ALL, DOWNLOAD, PRINT
 // ======================================
 
 search.addEventListener("input", renderItems);
@@ -487,13 +487,6 @@ $("resetBtn").addEventListener("click", () => {
   items.forEach(item => { item.done = false; });
   saveAndSync();
   showStatus("All items unchecked! ♡");
-});
-
-$("restoreDefaultBtn").addEventListener("click", () => {
-  if (!confirm("Restore all 59 original default items?")) return;
-  items = buildDefaultList();
-  saveAndSync();
-  showStatus("Default checklist restored! ♡");
 });
 
 $("downloadBtn").addEventListener("click", () => {
@@ -522,7 +515,7 @@ $("printBtn").addEventListener("click", () => {
   window.print();
 });
 
-// Render all 59 items sorted immediately on startup!
+// Render all items sorted immediately on startup!
 renderCategories();
 renderItems();
 updateProgress();
