@@ -5,14 +5,13 @@ import {
   initializeFirestore,
   doc,
   setDoc,
-  getDoc,
   onSnapshot
 } from
   "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 
 // ======================================
-// 1. FIREBASE CLOUD CONFIG (WITH LONG POLLING FOR MYANMAR NETWORKS)
+// 1. FIREBASE CLOUD CONFIG
 // ======================================
 
 const firebaseConfig = {
@@ -26,12 +25,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Force HTTP Long Polling so mobile data & Wi-Fi don't block real-time sync
 const db = initializeFirestore(app, {
   experimentalForceLongPolling: true
 });
 
-// Single cloud document shared by all phones
 const sharedDocRef = doc(db, "rooms", "gugu_shared_main");
 const STORAGE_KEY = "gugu_dorm_checklist_v2";
 
@@ -128,16 +125,48 @@ const starterItems = [
 
 
 // ======================================
-// 3. BUILD & SYNC ITEMS (LOCAL + CLOUD)
+// 3. AUTOMATIC SORTING FUNCTION
+// ======================================
+
+function sortItems(listToSort) {
+  listToSort.sort((a, b) => {
+    // 1. Put unchecked items at the top, and checked (done) items at the bottom
+    if (Boolean(a.done) !== Boolean(b.done)) {
+      return a.done ? 1 : -1;
+    }
+
+    // 2. Group by category order (Bedding -> Clothing -> Toiletries...)
+    const catA = categoryNames.indexOf(a.category);
+    const catB = categoryNames.indexOf(b.category);
+
+    const validCatA = catA === -1 ? 999 : catA;
+    const validCatB = catB === -1 ? 999 : catB;
+
+    if (validCatA !== validCatB) {
+      return validCatA - validCatB;
+    }
+
+    // 3. Sort alphabetically A-Z (and Burmese က-အ) inside the same category
+    return (a.name || "").localeCompare(b.name || "", undefined, {
+      sensitivity: "base"
+    });
+  });
+}
+
+
+// ======================================
+// 4. BUILD & SYNC ITEMS (LOCAL + CLOUD)
 // ======================================
 
 function buildDefaultList() {
-  return starterItems.map(([category, name], index) => ({
+  const list = starterItems.map(([category, name], index) => ({
     id: "item_" + index,
     category,
     name,
     done: false
   }));
+  sortItems(list);
+  return list;
 }
 
 function loadLocalItems() {
@@ -145,7 +174,10 @@ function loadLocalItems() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        sortItems(parsed);
+        return parsed;
+      }
     }
   } catch (e) {
     console.warn(e);
@@ -168,13 +200,14 @@ const itemInput = $("itemInput");
 const categoryInput = $("categoryInput");
 const activityText = $("activityText");
 
-// Immediately update text on load so we know v5 is active!
 if (activityText) {
   activityText.textContent = "Connecting to cloud sync... ♡";
 }
 
-// Save changes to both phone storage AND Firebase Cloud
+// Sort, save locally, and sync to Firebase Cloud
 async function saveAndSync() {
+  sortItems(items);
+
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   } catch (e) {
@@ -212,6 +245,7 @@ onSnapshot(
       const data = snapshot.data();
       if (Array.isArray(data.items) && data.items.length > 0) {
         items = data.items;
+        sortItems(items);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
         renderCategories();
         renderItems();
@@ -221,7 +255,6 @@ onSnapshot(
         }
       }
     } else {
-      // First time ever: upload the list to cloud
       saveAndSync();
     }
   },
@@ -235,7 +268,7 @@ onSnapshot(
 
 
 // ======================================
-// 4. STATUS POPUP MESSAGE
+// 5. STATUS POPUP MESSAGE
 // ======================================
 
 function showStatus(message) {
@@ -251,7 +284,7 @@ function showStatus(message) {
 
 
 // ======================================
-// 5. RENDER CATEGORIES & CHECKLIST
+// 6. RENDER CATEGORIES & CHECKLIST
 // ======================================
 
 function renderCategories() {
@@ -274,6 +307,7 @@ function renderCategories() {
 }
 
 function renderItems() {
+  sortItems(items);
   list.innerHTML = "";
   const query = search.value.toLowerCase();
 
@@ -345,7 +379,7 @@ function renderItems() {
 
 
 // ======================================
-// 6. PROGRESS BAR
+// 7. PROGRESS BAR
 // ======================================
 
 function updateProgress() {
@@ -360,7 +394,7 @@ function updateProgress() {
 
 
 // ======================================
-// 7. ADD / EDIT ITEM MODAL
+// 8. ADD / EDIT ITEM MODAL
 // ======================================
 
 function openModal(id = null) {
@@ -436,7 +470,7 @@ function saveItem() {
 
 
 // ======================================
-// 8. BUTTONS: SEARCH, RESET, DOWNLOAD, PRINT
+// 9. BUTTONS: SEARCH, RESET, DOWNLOAD, PRINT
 // ======================================
 
 search.addEventListener("input", renderItems);
@@ -479,7 +513,7 @@ $("printBtn").addEventListener("click", () => {
   window.print();
 });
 
-// Render all 59 items immediately on startup!
+// Render all 59 items sorted immediately on startup!
 renderCategories();
 renderItems();
 updateProgress();
