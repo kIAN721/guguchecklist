@@ -7,8 +7,8 @@
 
   <title>My Little Dorm Checklist</title>
 
-  <link rel="icon" type="image/png" href="favicon.png?v=4">
-  <link rel="stylesheet" href="css/style.css?v=16">
+  <link rel="icon" type="image/png" href="favicon.png?v=5">
+  <link rel="stylesheet" href="css/style.css?v=18">
 </head>
 
 <body>
@@ -39,72 +39,106 @@
 
       <div class="dashboard">
 
-        <!-- Progress Card: Always-Full Mascot Cup + Mini Filling Progress Cup -->
+        <!-- Progress Card: Self-Moving & Tap-Interactive Mascot Cup + Mini Filling Glass -->
         <div class="card progress-card">
           <div class="progress-layout">
 
-            <!-- Left Mascot: Always 100% Full & Interactive when tapped -->
+            <!-- Left Mascot: Moves & Bubbles 24/7 + Extra Bounce & Burst when Tapped! -->
             <div class="drink-illustration" id="drinkCup" title="Tap me for a sip! 🍓🍵">
               <div id="cupSparkles" class="cup-sparkles"></div>
 
               <svg viewBox="0 0 100 130" class="matcha-cup-svg">
-                <!-- Green Straw -->
-                <path d="M58 6 L48 105" stroke="#7fb68d" stroke-width="6" stroke-linecap="round" />
-                <path d="M58 6 L48 105" stroke="#a8d5b5" stroke-width="2" stroke-linecap="round" />
-
-                <!-- Dome Lid -->
-                <path d="M22 42 C22 18, 78 18, 78 42 Z" fill="#ffffff" fill-opacity="0.78" stroke="#d9e8dd" stroke-width="2.5" />
-
                 <defs>
                   <clipPath id="mascotCupClip">
                     <path d="M20 44 L27 112 C27.5 117, 32 120, 37 120 L63 120 C68 120, 72.5 117, 73 112 L80 44 Z" />
                   </clipPath>
+
+                  <!-- Vibrant Matcha Gradient -->
+                  <linearGradient id="vibrantMatcha" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#7be098" />
+                    <stop offset="100%" stop-color="#4db86d" />
+                  </linearGradient>
+
+                  <!-- Vibrant Strawberry Gradient -->
+                  <linearGradient id="vibrantStrawberry" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff8da8" />
+                    <stop offset="100%" stop-color="#ff5c86" />
+                  </linearGradient>
                 </defs>
 
-                <!-- Always Full 3 Drink Layers -->
-                <g clip-path="url(#mascotCupClip)">
-                  <!-- Matcha Green Layer -->
-                  <rect x="15" y="44" width="70" height="27" fill="#98cfa6" />
-                  <!-- Creamy Milk Wave Layer -->
-                  <path d="M15 68 Q35 63, 50 69 T85 67 L85 96 L15 96 Z" fill="#fffdf9" />
-                  <!-- Strawberry Pink Bottom Layer -->
-                  <path d="M15 92 Q35 88, 52 94 T85 91 L85 125 L15 125 Z" fill="#f7a8b8" />
-
-                  <!-- Cute Ice Cubes -->
-                  <rect x="30" y="52" width="12" height="10" rx="3" fill="#ffffff" fill-opacity="0.65" transform="rotate(-8 30 52)" />
-                  <rect x="52" y="55" width="13" height="11" rx="3" fill="#ffffff" fill-opacity="0.65" transform="rotate(12 52 55)" />
-                  <rect x="38" y="72" width="12" height="10" rx="3" fill="#ffffff" fill-opacity="0.85" transform="rotate(6 38 72)" />
-
-                  <!-- Little Strawberry Chunks at the Bottom -->
-                  <circle cx="36" cy="108" r="3" fill="#e26d85" opacity="0.65" />
-                  <circle cx="50" cy="112" r="2.5" fill="#e26d85" opacity="0.65" />
-                  <circle cx="62" cy="106" r="3.2" fill="#e26d85" opacity="0.65" />
-
-                  <!-- Cute Kawaii Face on Mascot Cup -->
-                  <g id="cupFaceNormal">
-                    <circle cx="41" cy="80" r="2.3" fill="#4a574e" />
-                    <circle cx="59" cy="80" r="2.3" fill="#4a574e" />
-                  </g>
-                  <g id="cupFaceHappy" style="display: none;">
-                    <path d="M38 81 Q41 77, 44 81" fill="none" stroke="#4a574e" stroke-width="2" stroke-linecap="round" />
-                    <path d="M56 81 Q59 77, 62 81" fill="none" stroke="#4a574e" stroke-width="2" stroke-linecap="round" />
-                  </g>
-                  <ellipse cx="36" cy="83" rx="3" ry="1.6" fill="#f49bb2" opacity="0.85" />
-                  <ellipse cx="64" cy="83" rx="3" ry="1.6" fill="#f49bb2" opacity="0.85" />
-                  <path d="M47 81 Q50 84.5, 53 81" fill="none" stroke="#4a574e" stroke-width="1.8" stroke-linecap="round" />
+                <!-- Green Straw -->
+                <g class="straw-sway">
+                  <path d="M58 6 L48 105" stroke="#4db86d" stroke-width="6.5" stroke-linecap="round" />
+                  <path d="M58 6 L48 105" stroke="#98f0b3" stroke-width="2.2" stroke-linecap="round" />
                 </g>
 
-                <!-- Cup Rim & Outline -->
-                <path d="M20 44 L27 112 C27.5 117, 32 120, 37 120 L63 120 C68 120, 72.5 117, 73 112 L80 44 Z" fill="none" stroke="#d5e5d9" stroke-width="2.5" />
-                <rect x="17" y="41" width="66" height="5" rx="2.5" fill="#ffffff" stroke="#d5e5d9" stroke-width="2" />
+                <!-- Glossy Dome Lid -->
+                <path d="M22 42 C22 18, 78 18, 78 42 Z" fill="#ffffff" fill-opacity="0.82" stroke="#b8e0c4" stroke-width="2.5" />
+                <path d="M30 35 C34 24, 48 22, 54 22" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
 
-                <!-- Strawberry Garnish on Rim -->
-                <g transform="translate(68, 28) rotate(18)">
-                  <path d="M8 2 C3 2, 1 7, 3 12 C5 16, 7 18, 8 18 C9 18, 11 16, 13 12 C15 7, 13 2, 8 2 Z" fill="#f27d96" />
-                  <path d="M5 2 Q8 5, 11 2 Q8 0, 5 2 Z" fill="#7fb68d" />
-                  <circle cx="6.5" cy="7" r="0.7" fill="#fff9fa" />
-                  <circle cx="9.5" cy="8" r="0.7" fill="#fff9fa" />
-                  <circle cx="8" cy="12" r="0.7" fill="#fff9fa" />
+                <!-- Always Full Vibrant 3 Drink Layers -->
+                <g clip-path="url(#mascotCupClip)">
+                  <!-- Rich Matcha Top Layer -->
+                  <rect x="15" y="44" width="70" height="28" fill="url(#vibrantMatcha)" />
+
+                  <!-- Creamy Milk Wave Layer -->
+                  <path d="M12 68 Q35 62, 50 69 T88 66 L88 96 L12 96 Z" fill="#ffffff" />
+
+                  <!-- Vibrant Strawberry Bottom Layer -->
+                  <path d="M12 91 Q35 86, 52 93 T88 90 L88 125 L12 125 Z" fill="url(#vibrantStrawberry)" />
+
+                  <!-- Continuous Rising Fizz Bubbles Inside the Cup -->
+                  <circle class="fizz-bubble b1" cx="32" cy="115" r="2.2" fill="#ffffff" fill-opacity="0.8" />
+                  <circle class="fizz-bubble b2" cx="46" cy="118" r="1.8" fill="#ffffff" fill-opacity="0.8" />
+                  <circle class="fizz-bubble b3" cx="62" cy="114" r="2.5" fill="#ffffff" fill-opacity="0.8" />
+                  <circle class="fizz-bubble b4" cx="39" cy="116" r="1.6" fill="#ffe0e8" fill-opacity="0.9" />
+                  <circle class="fizz-bubble b5" cx="55" cy="117" r="2.1" fill="#e2fbe8" fill-opacity="0.9" />
+
+                  <!-- Bobbing Ice Cubes -->
+                  <g class="ice-bob">
+                    <rect x="29" y="50" width="13" height="11" rx="3" fill="#ffffff" fill-opacity="0.82" transform="rotate(-10 29 50)" />
+                    <rect x="53" y="53" width="14" height="11" rx="3" fill="#ffffff" fill-opacity="0.82" transform="rotate(14 53 53)" />
+                    <rect x="38" y="70" width="13" height="10" rx="3" fill="#f2fbf5" fill-opacity="0.9" transform="rotate(6 38 70)" />
+                  </g>
+
+                  <!-- Rich Strawberry Chunks at the Bottom -->
+                  <circle cx="35" cy="108" r="3.5" fill="#d92b5a" opacity="0.75" />
+                  <circle cx="50" cy="113" r="2.8" fill="#d92b5a" opacity="0.75" />
+                  <circle cx="63" cy="106" r="3.6" fill="#d92b5a" opacity="0.75" />
+
+                  <!-- Cute Blinking Kawaii Face -->
+                  <g id="cupFaceNormal" class="kawaii-blink">
+                    <circle cx="40" cy="80" r="2.6" fill="#2d3a31" />
+                    <circle cx="60" cy="80" r="2.6" fill="#2d3a31" />
+                    <circle cx="41" cy="79" r="0.9" fill="#ffffff" />
+                    <circle cx="61" cy="79" r="0.9" fill="#ffffff" />
+                  </g>
+                  <!-- Happy Cheering Eyes (Shown when tapped OR at 100%!) -->
+                  <g id="cupFaceHappy" style="display: none;">
+                    <path d="M37 81 Q40 76, 43 81" fill="none" stroke="#2d3a31" stroke-width="2.2" stroke-linecap="round" />
+                    <path d="M57 81 Q60 76, 63 81" fill="none" stroke="#2d3a31" stroke-width="2.2" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Rosy Pink Cheeks -->
+                  <ellipse cx="34.5" cy="83.5" rx="3.5" ry="2" fill="#ff5c86" opacity="0.85" />
+                  <ellipse cx="65.5" cy="83.5" rx="3.5" ry="2" fill="#ff5c86" opacity="0.85" />
+                  <path id="cupMouth" d="M46.5 81.5 Q50 85.5, 53.5 81.5" fill="none" stroke="#2d3a31" stroke-width="2" stroke-linecap="round" />
+
+                  <!-- Glossy Vertical Glass Shine Overlay -->
+                  <path d="M24 46 L30 110" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-opacity="0.48" />
+                </g>
+
+                <!-- Cup Rim & Crisp Outline -->
+                <path d="M20 44 L27 112 C27.5 117, 32 120, 37 120 L63 120 C68 120, 72.5 117, 73 112 L80 44 Z" fill="none" stroke="#a6d9b5" stroke-width="2.5" />
+                <rect x="17" y="41" width="66" height="5.5" rx="2.7" fill="#ffffff" stroke="#a6d9b5" stroke-width="2" />
+
+                <!-- Vibrant Strawberry Garnish on Rim -->
+                <g transform="translate(68, 27) rotate(18)">
+                  <path d="M8 2 C3 2, 1 7, 3 12 C5 16, 7 18, 8 18 C9 18, 11 16, 13 12 C15 7, 13 2, 8 2 Z" fill="#ff4778" />
+                  <path d="M5 2 Q8 5, 11 2 Q8 0, 5 2 Z" fill="#4db86d" />
+                  <circle cx="6.5" cy="7" r="0.8" fill="#ffffff" />
+                  <circle cx="9.5" cy="8" r="0.8" fill="#ffffff" />
+                  <circle cx="8" cy="12" r="0.8" fill="#ffffff" />
                 </g>
               </svg>
             </div>
@@ -118,7 +152,7 @@
                 <div class="mini-cup-status">
                   <svg viewBox="0 0 36 44" class="mini-fill-cup" aria-hidden="true">
                     <!-- Mini Pink Straw -->
-                    <path d="M22 2 L17 36" stroke="#f49bb2" stroke-width="2.8" stroke-linecap="round" />
+                    <path d="M22 2 L17 36" stroke="#ff5c86" stroke-width="2.8" stroke-linecap="round" />
 
                     <defs>
                       <clipPath id="miniCupShape">
@@ -134,15 +168,15 @@
                     <g clip-path="url(#miniCupShape)">
                       <rect x="4" y="11" width="28" height="32" fill="#f3f9f5" />
                       <g clip-path="url(#miniLiquidMask)">
-                        <rect x="4" y="11" width="28" height="10" fill="#88c49c" />
-                        <rect x="4" y="21" width="28" height="10" fill="#fffdf8" />
-                        <rect x="4" y="31" width="28" height="11" fill="#f49bb2" />
+                        <rect x="4" y="11" width="28" height="10" fill="#5ec27e" />
+                        <rect x="4" y="21" width="28" height="10" fill="#ffffff" />
+                        <rect x="4" y="31" width="28" height="11" fill="#ff6b95" />
                       </g>
                     </g>
 
                     <!-- Mini Glass Outline & Rim -->
-                    <path d="M6 11 L9 37 C9.3 39.5, 11 41, 13.5 41 L22.5 41 C25 41, 26.7 39.5, 27 37 L30 11 Z" fill="none" stroke="#b8d8c2" stroke-width="2" />
-                    <rect x="4.5" y="9.5" width="27" height="3" rx="1.5" fill="#ffffff" stroke="#b8d8c2" stroke-width="1.5" />
+                    <path d="M6 11 L9 37 C9.3 39.5, 11 41, 13.5 41 L22.5 41 C25 41, 26.7 39.5, 27 37 L30 11 Z" fill="none" stroke="#98cfa6" stroke-width="2" />
+                    <rect x="4.5" y="9.5" width="27" height="3" rx="1.5" fill="#ffffff" stroke="#98cfa6" stroke-width="1.5" />
                   </svg>
 
                   <span id="percentage">0%</span>
@@ -246,7 +280,7 @@
     </div>
   </div>
 
-  <script type="module" src="js/script.js?v=16"></script>
+  <script type="module" src="js/script.js?v=18"></script>
 
 </body>
 </html>

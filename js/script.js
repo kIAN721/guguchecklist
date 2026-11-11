@@ -203,6 +203,7 @@ let items = loadLocalItems();
 let activeCategory = "All";
 let editingId = null;
 let statusTimeout = null;
+let faceTimeout = null;
 
 const $ = id => document.getElementById(id);
 
@@ -344,7 +345,13 @@ function createItemRow(item) {
   checkbox.addEventListener("change", () => {
     item.done = checkbox.checked;
     saveAndSync();
-    showStatus(item.done ? "Checked! 🍓♡" : "Unchecked");
+    if (item.done) {
+      spawnCupBubbles(3);
+      triggerHappyCupFace(1200);
+      showStatus("Checked! 🍓♡");
+    } else {
+      showStatus("Unchecked");
+    }
   });
 
   const details = document.createElement("div");
@@ -442,7 +449,7 @@ function renderItems() {
 
 
 // ======================================
-// 7. PROGRESS BAR & INTERACTIVE CUPS
+// 7. PROGRESS BAR & SELF-MOVING + TAP-INTERACTIVE CUP
 // ======================================
 
 function updateProgress() {
@@ -465,7 +472,7 @@ function updateProgress() {
     liquidRect.setAttribute("height", String(fillHeight));
   }
 
-  // Switch the big Mascot Cup's face to super happy (^ ◡ ^) at 100%!
+  // Keep Happy Face permanently on if 100% packed
   const normalFace = $("cupFaceNormal");
   const happyFace = $("cupFaceHappy");
   if (normalFace && happyFace) {
@@ -479,6 +486,58 @@ function updateProgress() {
   }
 }
 
+// Helper: Pop floating strawberry/matcha/heart bubbles above the cup
+function spawnCupBubbles(count = 1) {
+  const sparkles = $("cupSparkles");
+  if (!sparkles) return;
+
+  const icons = ["🍓", "🍵", "♡", "✨", "🫧"];
+  for (let i = 0; i < count; i++) {
+    const span = document.createElement("span");
+    span.className = "cup-bubble";
+    span.textContent = icons[Math.floor(Math.random() * icons.length)];
+    const dx = (Math.random() * 52 - 26).toFixed(0) + "px";
+    span.style.setProperty("--dx", dx);
+    sparkles.appendChild(span);
+    setTimeout(() => span.remove(), 1200);
+  }
+}
+
+// Helper: Temporarily switch the cup's face to happy (^ ◡ ^) when tapped or checking an item
+function triggerHappyCupFace(duration = 1400) {
+  const normalFace = $("cupFaceNormal");
+  const happyFace = $("cupFaceHappy");
+  const mouth = $("cupMouth");
+  if (!normalFace || !happyFace) return;
+
+  normalFace.style.display = "none";
+  happyFace.style.display = "block";
+  if (mouth) {
+    mouth.setAttribute("d", "M45.5 81 Q50 87, 54.5 81");
+  }
+
+  clearTimeout(faceTimeout);
+  faceTimeout = setTimeout(() => {
+    const total = items.length;
+    const completed = items.filter(item => item.done).length;
+    const pct = total ? Math.round((completed / total) * 100) : 0;
+
+    if (pct < 100) {
+      normalFace.style.display = "block";
+      happyFace.style.display = "none";
+    }
+    if (mouth) {
+      mouth.setAttribute("d", "M46.5 81.5 Q50 85.5, 53.5 81.5");
+    }
+  }, duration);
+}
+
+// 1. SELF-MOVING: Automatically float a cute bubble out of the straw every 2.2 seconds!
+setInterval(() => {
+  spawnCupBubbles(1);
+}, 2200);
+
+// 2. TAP-INTERACTIVE: Wiggle, happy eyes, burst of 6 bubbles & sweet message when she taps!
 const drinkCup = $("drinkCup");
 if (drinkCup) {
   drinkCup.addEventListener("click", () => {
@@ -486,19 +545,8 @@ if (drinkCup) {
     void drinkCup.offsetWidth;
     drinkCup.classList.add("sip-bounce");
 
-    const sparkles = $("cupSparkles");
-    if (sparkles) {
-      const icons = ["🍓", "🍵", "♡", "✨"];
-      for (let i = 0; i < 3; i++) {
-        const span = document.createElement("span");
-        span.className = "cup-bubble";
-        span.textContent = icons[(i + Math.floor(Math.random() * icons.length)) % icons.length];
-        const dx = (Math.random() * 44 - 22).toFixed(0) + "px";
-        span.style.setProperty("--dx", dx);
-        sparkles.appendChild(span);
-        setTimeout(() => span.remove(), 900);
-      }
-    }
+    spawnCupBubbles(6);
+    triggerHappyCupFace(1600);
 
     const total = items.length;
     const completed = items.filter(item => item.done).length;
