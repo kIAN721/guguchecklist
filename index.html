@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f8f3ec">
+  <meta name="theme-color" content="#f7faf6">
 
   <title>My Little Dorm Checklist</title>
 
-  <link rel="icon" type="image/png" href="favicon.png">
-
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="favicon.png?v=3">
+  <link rel="stylesheet" href="css/style.css?v=13">
 </head>
 
 <body>
@@ -18,7 +17,7 @@
 
     <header>
       <div class="top">
-        <span>MY LITTLE CHECKLIST</span>
+        <span>🍓 STRAWBERRY MATCHA CHECKLIST 🍵</span>
         <span class="heart">♡</span>
       </div>
 
@@ -30,28 +29,97 @@
       </p>
     </header>
 
-    <!-- MAIN APP (SHOWS IMMEDIATELY) -->
+    <!-- MAIN APP -->
     <section id="appScreen">
 
       <div class="dashboard">
 
-        <!-- Progress -->
-        <div class="card">
-          <div class="progress-header">
-            <strong>Packing progress</strong>
-            <span id="percentage">0%</span>
-          </div>
+        <!-- Progress Card with Cute Strawberry Matcha Illustration -->
+        <div class="card progress-card">
+          <div class="progress-layout">
 
-          <div class="progress-track">
-            <div id="progress" class="progress-fill"></div>
-          </div>
+            <!-- Cute Built-in Iced Strawberry Matcha Latte SVG -->
+            <div class="drink-illustration" aria-hidden="true">
+              <svg viewBox="0 0 100 130" class="matcha-cup-svg">
+                <!-- Green Straw -->
+                <path d="M58 6 L48 105" stroke="#7fb68d" stroke-width="6" stroke-linecap="round" />
+                <path d="M58 6 L48 105" stroke="#a8d5b5" stroke-width="2" stroke-linecap="round" />
 
-          <p id="progressText" class="small">
-            0 of 0 items completed
-          </p>
+                <!-- Dome Lid -->
+                <path d="M22 42 C22 18, 78 18, 78 42 Z" fill="#ffffff" fill-opacity="0.75" stroke="#d9e8dd" stroke-width="2.5" />
+
+                <!-- Cup Body Clip Path -->
+                <defs>
+                  <clipPath id="cupClip">
+                    <path d="M20 44 L27 112 C27.5 117, 32 120, 37 120 L63 120 C68 120, 72.5 117, 73 112 L80 44 Z" />
+                  </clipPath>
+                </defs>
+
+                <!-- 3 Drink Layers: Matcha Top, Milk Middle, Strawberry Bottom -->
+                <g clip-path="url(#cupClip)">
+                  <!-- Matcha Green Layer -->
+                  <rect x="15" y="44" width="70" height="27" fill="#98cfa6" />
+                  <!-- Creamy Milk Wave Layer -->
+                  <path d="M15 68 Q35 63, 50 69 T85 67 L85 96 L15 96 Z" fill="#fffdf9" />
+                  <!-- Strawberry Pink Bottom Layer -->
+                  <path d="M15 92 Q35 88, 52 94 T85 91 L85 125 L15 125 Z" fill="#f7a8b8" />
+
+                  <!-- Cute Ice Cubes -->
+                  <rect x="30" y="52" width="12" height="10" rx="3" fill="#ffffff" fill-opacity="0.65" transform="rotate(-8 30 52)" />
+                  <rect x="52" y="55" width="13" height="11" rx="3" fill="#ffffff" fill-opacity="0.65" transform="rotate(12 52 55)" />
+                  <rect x="38" y="72" width="12" height="10" rx="3" fill="#ffffff" fill-opacity="0.8" transform="rotate(6 38 72)" />
+
+                  <!-- Little Strawberry Chunks at the Bottom -->
+                  <circle cx="36" cy="108" r="3" fill="#e26d85" opacity="0.6" />
+                  <circle cx="50" cy="112" r="2.5" fill="#e26d85" opacity="0.6" />
+                  <circle cx="62" cy="106" r="3.2" fill="#e26d85" opacity="0.6" />
+
+                  <!-- Cute Kawaii Face on Cup -->
+                  <circle cx="41" cy="80" r="2.3" fill="#4a574e" />
+                  <circle cx="59" cy="80" r="2.3" fill="#4a574e" />
+                  <ellipse cx="36" cy="83" rx="3" ry="1.6" fill="#f7a8b8" opacity="0.8" />
+                  <ellipse cx="64" cy="83" rx="3" ry="1.6" fill="#f7a8b8" opacity="0.8" />
+                  <path d="M47 81 Q50 84.5, 53 81" fill="none" stroke="#4a574e" stroke-width="1.8" stroke-linecap="round" />
+                </g>
+
+                <!-- Cup Rim & Outline -->
+                <path d="M20 44 L27 112 C27.5 117, 32 120, 37 120 L63 120 C68 120, 72.5 117, 73 112 L80 44 Z" fill="none" stroke="#d5e5d9" stroke-width="2.5" />
+                <rect x="17" y="41" width="66" height="5" rx="2.5" fill="#ffffff" stroke="#d5e5d9" stroke-width="2" />
+
+                <!-- Little Floating Strawberry Garnish on Rim -->
+                <g transform="translate(68, 28) rotate(18)">
+                  <path d="M8 2 C3 2, 1 7, 3 12 C5 16, 7 18, 8 18 C9 18, 11 16, 13 12 C15 7, 13 2, 8 2 Z" fill="#f27d96" />
+                  <path d="M5 2 Q8 5, 11 2 Q8 0, 5 2 Z" fill="#7fb68d" />
+                  <circle cx="6.5" cy="7" r="0.7" fill="#fff9fa" />
+                  <circle cx="9.5" cy="8" r="0.7" fill="#fff9fa" />
+                  <circle cx="8" cy="12" r="0.7" fill="#fff9fa" />
+                </g>
+              </svg>
+            </div>
+
+            <!-- Progress Details -->
+            <div class="progress-details">
+              <div class="progress-header">
+                <strong>Packing progress</strong>
+                <span id="percentage">0%</span>
+              </div>
+
+              <div class="progress-track">
+                <div id="progress" class="progress-fill"></div>
+              </div>
+
+              <div class="progress-meta-row">
+                <p id="progressText" class="small">
+                  0 of 0 items completed
+                </p>
+                <span id="itemCount" class="badge-pill"></span>
+              </div>
+            </div>
+
+          </div>
         </div>
 
-        <!-- Search and add -->
+        <!-- Search and Add -->
         <div class="toolbar">
           <input
             type="search"
@@ -64,32 +132,25 @@
           </button>
         </div>
 
-        <!-- Categories -->
+        <!-- Horizontal Scrollable Categories -->
         <nav id="categories" class="categories"></nav>
 
-        <!-- Checklist -->
-        <div class="card">
-          <div class="section-title">
-            <strong id="listTitle">Your checklist</strong>
-            <span id="itemCount" class="small"></span>
-          </div>
+        <!-- Grouped Category Cards Container -->
+        <div id="list" class="grouped-list"></div>
 
-          <div id="list"></div>
-        </div>
-
-        <!-- Controls -->
-        <div class="card">
+        <!-- Symmetrical Bottom Controls -->
+        <div class="card options-card">
           <h3>Checklist Options</h3>
           <p id="activityText" class="small">
             Items are automatically saved ♡
           </p>
 
-          <div class="toolbar">
+          <div class="options-grid">
             <button id="resetBtn" class="secondary">
               Uncheck all
             </button>
 
-            <button id="downloadBtn" class="secondary">
+            <button id="downloadBtn" class="matcha-soft">
               Download list
             </button>
           </div>
@@ -101,7 +162,7 @@
     <div id="status" class="status" role="status"></div>
 
     <footer>
-      Made with care, just for you ♡
+      Made with care, just for you 🍓🍵♡
     </footer>
 
   </main>
@@ -138,7 +199,7 @@
     </div>
   </div>
 
-  <script type="module" src="js/script.js?v=9"></script>
+  <script type="module" src="js/script.js?v=11"></script>
 
 </body>
 </html>

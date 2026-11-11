@@ -34,7 +34,7 @@ const STORAGE_KEY = "gugu_dorm_checklist_v4";
 
 
 // ======================================
-// 2. CATEGORIES & YOUR CUSTOM DEFAULT ITEMS
+// 2. CATEGORIES, ICONS & CUSTOM DEFAULT ITEMS
 // ======================================
 
 const categoryNames = [
@@ -47,6 +47,18 @@ const categoryNames = [
   "Health & safety",
   "Foods"
 ];
+
+const categoryIcons = {
+  "All": "🍓",
+  "Bedding": "🛏️",
+  "Clothing": "👗",
+  "Toiletries": "🧴",
+  "Electronics": "🎧",
+  "Daily necessities": "🧺",
+  "Documents & money": "🪪",
+  "Health & safety": "🩹",
+  "Foods": "🍵"
+};
 
 const starterItems = [
   // Bedding
@@ -289,7 +301,7 @@ function showStatus(message) {
 
 
 // ======================================
-// 6. RENDER CATEGORIES & CHECKLIST
+// 6. RENDER HORIZONTAL TABS & GROUPED CATEGORY CARDS
 // ======================================
 
 function renderCategories() {
@@ -299,7 +311,20 @@ function renderCategories() {
   allCategories.forEach(category => {
     const button = document.createElement("button");
     button.className = "category-btn" + (activeCategory === category ? " active" : "");
-    button.textContent = category;
+
+    const icon = categoryIcons[category] || "✨";
+    const count = category === "All"
+      ? items.length
+      : items.filter(i => i.category === category).length;
+
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = `${icon} ${category}`;
+
+    const countSpan = document.createElement("span");
+    countSpan.className = "cat-tab-count";
+    countSpan.textContent = count;
+
+    button.append(labelSpan, countSpan);
 
     button.addEventListener("click", () => {
       activeCategory = category;
@@ -309,6 +334,47 @@ function renderCategories() {
 
     categories.appendChild(button);
   });
+}
+
+function createItemRow(item) {
+  const row = document.createElement("div");
+  row.className = "item" + (item.done ? " done" : "");
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = !!item.done;
+
+  checkbox.addEventListener("change", () => {
+    item.done = checkbox.checked;
+    saveAndSync();
+    showStatus(item.done ? "Checked! 🍓♡" : "Unchecked");
+  });
+
+  const details = document.createElement("div");
+  details.className = "item-name";
+  details.textContent = item.name;
+
+  const actions = document.createElement("div");
+  actions.className = "item-actions";
+
+  const edit = document.createElement("button");
+  edit.className = "icon-btn";
+  edit.textContent = "Edit";
+  edit.addEventListener("click", () => openModal(item.id));
+
+  const remove = document.createElement("button");
+  remove.className = "icon-btn";
+  remove.textContent = "Delete";
+  remove.addEventListener("click", () => {
+    if (!confirm(`Delete "${item.name}"?`)) return;
+    items = items.filter(i => i.id !== item.id);
+    saveAndSync();
+    showStatus("Item deleted.");
+  });
+
+  actions.append(edit, remove);
+  row.append(checkbox, details, actions);
+  return row;
 }
 
 function renderItems() {
@@ -323,64 +389,58 @@ function renderItems() {
 
   sortItems(filtered);
 
-  $("listTitle").textContent = activeCategory === "All" ? "Your checklist" : activeCategory;
-  $("itemCount").textContent = filtered.length + " items";
+  if ($("itemCount")) {
+    $("itemCount").textContent = filtered.length + " items shown";
+  }
 
   if (!filtered.length) {
     const empty = document.createElement("div");
     empty.className = "empty";
-    empty.textContent = "No items found. ♡";
+    empty.textContent = "No items found in this category. 🍓🍵";
     list.appendChild(empty);
     return;
   }
 
-  filtered.forEach(item => {
-    const row = document.createElement("div");
-    row.className = "item" + (item.done ? " done" : "");
+  // Group into separate Category Cards
+  const categoriesToShow = activeCategory === "All"
+    ? categoryNames
+    : [activeCategory];
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = !!item.done;
+  categoriesToShow.forEach(category => {
+    const groupItems = filtered.filter(item => item.category === category);
+    if (!groupItems.length) return;
 
-    checkbox.addEventListener("change", () => {
-      item.done = checkbox.checked;
-      saveAndSync();
-      showStatus(item.done ? "Checked! ♡" : "Unchecked");
+    const groupCard = document.createElement("div");
+    groupCard.className = "category-group-card";
+
+    const header = document.createElement("div");
+    header.className = "category-group-header";
+
+    const titleWrap = document.createElement("div");
+    titleWrap.className = "category-group-title";
+
+    const iconSpan = document.createElement("span");
+    iconSpan.className = "category-group-icon";
+    iconSpan.textContent = categoryIcons[category] || "✨";
+
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = category;
+
+    titleWrap.append(iconSpan, nameSpan);
+
+    const doneCount = groupItems.filter(i => i.done).length;
+    const badge = document.createElement("span");
+    badge.className = "category-group-badge";
+    badge.textContent = `${doneCount} / ${groupItems.length} packed`;
+
+    header.append(titleWrap, badge);
+    groupCard.appendChild(header);
+
+    groupItems.forEach(item => {
+      groupCard.appendChild(createItemRow(item));
     });
 
-    const details = document.createElement("div");
-    details.className = "item-name";
-
-    const name = document.createElement("div");
-    name.textContent = item.name;
-
-    const meta = document.createElement("div");
-    meta.className = "item-meta";
-    meta.textContent = item.category;
-
-    details.append(name, meta);
-
-    const actions = document.createElement("div");
-    actions.className = "item-actions";
-
-    const edit = document.createElement("button");
-    edit.className = "icon-btn";
-    edit.textContent = "Edit";
-    edit.addEventListener("click", () => openModal(item.id));
-
-    const remove = document.createElement("button");
-    remove.className = "icon-btn";
-    remove.textContent = "Delete";
-    remove.addEventListener("click", () => {
-      if (!confirm(`Delete "${item.name}"?`)) return;
-      items = items.filter(i => i.id !== item.id);
-      saveAndSync();
-      showStatus("Item deleted.");
-    });
-
-    actions.append(edit, remove);
-    row.append(checkbox, details, actions);
-    list.appendChild(row);
+    list.appendChild(groupCard);
   });
 }
 
@@ -411,7 +471,7 @@ function openModal(id = null) {
   categoryNames.forEach(category => {
     const option = document.createElement("option");
     option.value = category;
-    option.textContent = category;
+    option.textContent = `${categoryIcons[category] || ""} ${category}`;
     categoryInput.appendChild(option);
   });
 
@@ -468,7 +528,7 @@ function saveItem() {
       category,
       done: false
     });
-    showStatus("New item added! ♡");
+    showStatus("New item added! 🍓♡");
   }
 
   closeModal();
@@ -477,43 +537,43 @@ function saveItem() {
 
 
 // ======================================
-// 9. BUTTONS: SEARCH, UNCHECK ALL, DOWNLOAD, PRINT
+// 9. BUTTONS: SEARCH, UNCHECK ALL, DOWNLOAD
 // ======================================
 
 search.addEventListener("input", renderItems);
 
-$("resetBtn").addEventListener("click", () => {
-  if (!confirm("Uncheck ALL items?")) return;
-  items.forEach(item => { item.done = false; });
-  saveAndSync();
-  showStatus("All items unchecked! ♡");
-});
+if ($("resetBtn")) {
+  $("resetBtn").addEventListener("click", () => {
+    if (!confirm("Uncheck ALL items?")) return;
+    items.forEach(item => { item.done = false; });
+    saveAndSync();
+    showStatus("All items unchecked! ♡");
+  });
+}
 
-$("downloadBtn").addEventListener("click", () => {
-  sortItems(items);
+if ($("downloadBtn")) {
+  $("downloadBtn").addEventListener("click", () => {
+    sortItems(items);
 
-  const content = categoryNames.map(category => {
-    const group = items.filter(item => item.category === category);
-    if (!group.length) return "";
+    const content = categoryNames.map(category => {
+      const group = items.filter(item => item.category === category);
+      if (!group.length) return "";
 
-    return category + "\n" +
-      group.map(item => `${item.done ? "[x]" : "[ ]"} ${item.name}`).join("\n");
-  }).filter(Boolean).join("\n\n");
+      return category + "\n" +
+        group.map(item => `${item.done ? "[x]" : "[ ]"} ${item.name}`).join("\n");
+    }).filter(Boolean).join("\n\n");
 
-  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
 
-  link.href = url;
-  link.download = "dorm-checklist.txt";
-  link.click();
+    link.href = url;
+    link.download = "dorm-checklist.txt";
+    link.click();
 
-  URL.revokeObjectURL(url);
-});
-
-$("printBtn").addEventListener("click", () => {
-  window.print();
-});
+    URL.revokeObjectURL(url);
+  });
+}
 
 // Render all items sorted immediately on startup!
 renderCategories();
