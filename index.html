@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f7faf6">
+  <meta name="theme-color" content="#fff2f6">
 
   <title>My Little Dorm Checklist</title>
 
-  <link rel="icon" type="image/png" href="favicon.png?v=3">
-  <link rel="stylesheet" href="css/style.css?v=13">
+  <link rel="icon" type="image/png" href="favicon.png?v=4">
+  <link rel="stylesheet" href="css/style.css?v=16">
 </head>
 
 <body>
 
   <main class="container">
 
+    <!-- ======================================
+         1. HEADER
+         ====================================== -->
     <header>
       <div class="top">
         <span>🍓 STRAWBERRY MATCHA CHECKLIST 🍵</span>
@@ -29,34 +32,37 @@
       </p>
     </header>
 
-    <!-- MAIN APP -->
+    <!-- ======================================
+         2. MAIN APP DASHBOARD
+         ====================================== -->
     <section id="appScreen">
 
       <div class="dashboard">
 
-        <!-- Progress Card with Cute Strawberry Matcha Illustration -->
+        <!-- Progress Card: Always-Full Mascot Cup + Mini Filling Progress Cup -->
         <div class="card progress-card">
           <div class="progress-layout">
 
-            <!-- Cute Built-in Iced Strawberry Matcha Latte SVG -->
-            <div class="drink-illustration" aria-hidden="true">
+            <!-- Left Mascot: Always 100% Full & Interactive when tapped -->
+            <div class="drink-illustration" id="drinkCup" title="Tap me for a sip! 🍓🍵">
+              <div id="cupSparkles" class="cup-sparkles"></div>
+
               <svg viewBox="0 0 100 130" class="matcha-cup-svg">
                 <!-- Green Straw -->
                 <path d="M58 6 L48 105" stroke="#7fb68d" stroke-width="6" stroke-linecap="round" />
                 <path d="M58 6 L48 105" stroke="#a8d5b5" stroke-width="2" stroke-linecap="round" />
 
                 <!-- Dome Lid -->
-                <path d="M22 42 C22 18, 78 18, 78 42 Z" fill="#ffffff" fill-opacity="0.75" stroke="#d9e8dd" stroke-width="2.5" />
+                <path d="M22 42 C22 18, 78 18, 78 42 Z" fill="#ffffff" fill-opacity="0.78" stroke="#d9e8dd" stroke-width="2.5" />
 
-                <!-- Cup Body Clip Path -->
                 <defs>
-                  <clipPath id="cupClip">
+                  <clipPath id="mascotCupClip">
                     <path d="M20 44 L27 112 C27.5 117, 32 120, 37 120 L63 120 C68 120, 72.5 117, 73 112 L80 44 Z" />
                   </clipPath>
                 </defs>
 
-                <!-- 3 Drink Layers: Matcha Top, Milk Middle, Strawberry Bottom -->
-                <g clip-path="url(#cupClip)">
+                <!-- Always Full 3 Drink Layers -->
+                <g clip-path="url(#mascotCupClip)">
                   <!-- Matcha Green Layer -->
                   <rect x="15" y="44" width="70" height="27" fill="#98cfa6" />
                   <!-- Creamy Milk Wave Layer -->
@@ -67,18 +73,24 @@
                   <!-- Cute Ice Cubes -->
                   <rect x="30" y="52" width="12" height="10" rx="3" fill="#ffffff" fill-opacity="0.65" transform="rotate(-8 30 52)" />
                   <rect x="52" y="55" width="13" height="11" rx="3" fill="#ffffff" fill-opacity="0.65" transform="rotate(12 52 55)" />
-                  <rect x="38" y="72" width="12" height="10" rx="3" fill="#ffffff" fill-opacity="0.8" transform="rotate(6 38 72)" />
+                  <rect x="38" y="72" width="12" height="10" rx="3" fill="#ffffff" fill-opacity="0.85" transform="rotate(6 38 72)" />
 
                   <!-- Little Strawberry Chunks at the Bottom -->
-                  <circle cx="36" cy="108" r="3" fill="#e26d85" opacity="0.6" />
-                  <circle cx="50" cy="112" r="2.5" fill="#e26d85" opacity="0.6" />
-                  <circle cx="62" cy="106" r="3.2" fill="#e26d85" opacity="0.6" />
+                  <circle cx="36" cy="108" r="3" fill="#e26d85" opacity="0.65" />
+                  <circle cx="50" cy="112" r="2.5" fill="#e26d85" opacity="0.65" />
+                  <circle cx="62" cy="106" r="3.2" fill="#e26d85" opacity="0.65" />
 
-                  <!-- Cute Kawaii Face on Cup -->
-                  <circle cx="41" cy="80" r="2.3" fill="#4a574e" />
-                  <circle cx="59" cy="80" r="2.3" fill="#4a574e" />
-                  <ellipse cx="36" cy="83" rx="3" ry="1.6" fill="#f7a8b8" opacity="0.8" />
-                  <ellipse cx="64" cy="83" rx="3" ry="1.6" fill="#f7a8b8" opacity="0.8" />
+                  <!-- Cute Kawaii Face on Mascot Cup -->
+                  <g id="cupFaceNormal">
+                    <circle cx="41" cy="80" r="2.3" fill="#4a574e" />
+                    <circle cx="59" cy="80" r="2.3" fill="#4a574e" />
+                  </g>
+                  <g id="cupFaceHappy" style="display: none;">
+                    <path d="M38 81 Q41 77, 44 81" fill="none" stroke="#4a574e" stroke-width="2" stroke-linecap="round" />
+                    <path d="M56 81 Q59 77, 62 81" fill="none" stroke="#4a574e" stroke-width="2" stroke-linecap="round" />
+                  </g>
+                  <ellipse cx="36" cy="83" rx="3" ry="1.6" fill="#f49bb2" opacity="0.85" />
+                  <ellipse cx="64" cy="83" rx="3" ry="1.6" fill="#f49bb2" opacity="0.85" />
                   <path d="M47 81 Q50 84.5, 53 81" fill="none" stroke="#4a574e" stroke-width="1.8" stroke-linecap="round" />
                 </g>
 
@@ -86,7 +98,7 @@
                 <path d="M20 44 L27 112 C27.5 117, 32 120, 37 120 L63 120 C68 120, 72.5 117, 73 112 L80 44 Z" fill="none" stroke="#d5e5d9" stroke-width="2.5" />
                 <rect x="17" y="41" width="66" height="5" rx="2.5" fill="#ffffff" stroke="#d5e5d9" stroke-width="2" />
 
-                <!-- Little Floating Strawberry Garnish on Rim -->
+                <!-- Strawberry Garnish on Rim -->
                 <g transform="translate(68, 28) rotate(18)">
                   <path d="M8 2 C3 2, 1 7, 3 12 C5 16, 7 18, 8 18 C9 18, 11 16, 13 12 C15 7, 13 2, 8 2 Z" fill="#f27d96" />
                   <path d="M5 2 Q8 5, 11 2 Q8 0, 5 2 Z" fill="#7fb68d" />
@@ -97,11 +109,44 @@
               </svg>
             </div>
 
-            <!-- Progress Details -->
+            <!-- Right Side: Progress Details + Mini Filling Glass -->
             <div class="progress-details">
               <div class="progress-header">
                 <strong>Packing progress</strong>
-                <span id="percentage">0%</span>
+
+                <!-- Percentage + Mini Filling Glass Badge -->
+                <div class="mini-cup-status">
+                  <svg viewBox="0 0 36 44" class="mini-fill-cup" aria-hidden="true">
+                    <!-- Mini Pink Straw -->
+                    <path d="M22 2 L17 36" stroke="#f49bb2" stroke-width="2.8" stroke-linecap="round" />
+
+                    <defs>
+                      <clipPath id="miniCupShape">
+                        <path d="M6 11 L9 37 C9.3 39.5, 11 41, 13.5 41 L22.5 41 C25 41, 26.7 39.5, 27 37 L30 11 Z" />
+                      </clipPath>
+                      <!-- Dynamic rising mask controlled by JS -->
+                      <clipPath id="miniLiquidMask">
+                        <rect id="cupLiquidLevel" x="4" y="41" width="28" height="0" />
+                      </clipPath>
+                    </defs>
+
+                    <!-- Empty Glass Base + Rising 3 Drink Layers -->
+                    <g clip-path="url(#miniCupShape)">
+                      <rect x="4" y="11" width="28" height="32" fill="#f3f9f5" />
+                      <g clip-path="url(#miniLiquidMask)">
+                        <rect x="4" y="11" width="28" height="10" fill="#88c49c" />
+                        <rect x="4" y="21" width="28" height="10" fill="#fffdf8" />
+                        <rect x="4" y="31" width="28" height="11" fill="#f49bb2" />
+                      </g>
+                    </g>
+
+                    <!-- Mini Glass Outline & Rim -->
+                    <path d="M6 11 L9 37 C9.3 39.5, 11 41, 13.5 41 L22.5 41 C25 41, 26.7 39.5, 27 37 L30 11 Z" fill="none" stroke="#b8d8c2" stroke-width="2" />
+                    <rect x="4.5" y="9.5" width="27" height="3" rx="1.5" fill="#ffffff" stroke="#b8d8c2" stroke-width="1.5" />
+                  </svg>
+
+                  <span id="percentage">0%</span>
+                </div>
               </div>
 
               <div class="progress-track">
@@ -112,14 +157,14 @@
                 <p id="progressText" class="small">
                   0 of 0 items completed
                 </p>
-                <span id="itemCount" class="badge-pill"></span>
+                <span id="itemCount" class="badge-pill">0 items shown</span>
               </div>
             </div>
 
           </div>
         </div>
 
-        <!-- Search and Add -->
+        <!-- Search and Add Toolbar -->
         <div class="toolbar">
           <input
             type="search"
@@ -159,22 +204,25 @@
       </div>
     </section>
 
+    <!-- Status Popup Toast -->
     <div id="status" class="status" role="status"></div>
 
+    <!-- Footer -->
     <footer>
       Made with care, just for you 🍓🍵♡
     </footer>
 
   </main>
 
-  <!-- ADD / EDIT MODAL -->
+  <!-- ======================================
+       3. ADD / EDIT ITEM MODAL
+       ====================================== -->
   <div id="modal" class="modal">
     <div class="modal-box">
 
       <h2 id="modalTitle">Add a new item</h2>
 
       <label for="itemInput">Item name</label>
-
       <input
         id="itemInput"
         type="text"
@@ -183,7 +231,6 @@
       >
 
       <label for="categoryInput">Category</label>
-
       <select id="categoryInput"></select>
 
       <div class="modal-actions">
@@ -199,7 +246,7 @@
     </div>
   </div>
 
-  <script type="module" src="js/script.js?v=11"></script>
+  <script type="module" src="js/script.js?v=16"></script>
 
 </body>
 </html>

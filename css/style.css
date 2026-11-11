@@ -1,8 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Padauk:wght@400;700&family=Playfair+Display:wght@600;700&display=swap');
 
+/* ======================================
+   1. STRAWBERRY MATCHA THEME VARIABLES
+   ====================================== */
 :root {
   --milk-bg: #fff2f6;           /* Warm strawberry-milk blush base */
-  --card: #ffffff;              /* Pure milk-white cards that pop against the pink */
+  --card: #ffffff;              /* Pure milk-white cards */
   --text: #344239;              /* Deep matcha-charcoal for crisp reading */
   --muted: #7e8f84;             /* Soft sage-gray */
 
@@ -11,7 +14,7 @@
   --matcha-soft: #eaf5ee;       /* Pale milky matcha */
   --matcha-border: #dceee2;     /* Delicate baby green border */
 
-  --strawberry: #f49bb2;        /* Richer baby strawberry pink */
+  --strawberry: #f49bb2;        /* Baby strawberry pink */
   --strawberry-dark: #d16482;   /* Warm berry rose for text/badges */
   --strawberry-soft: #fdeef3;   /* Pale strawberry milk background */
   --strawberry-border: #f9d8e2; /* Soft baby pink border */
@@ -21,6 +24,9 @@
   box-sizing: border-box;
 }
 
+/* ======================================
+   2. DRIFTING STRAWBERRY MATCHA BACKGROUND
+   ====================================== */
 body {
   margin: 0;
   color: var(--text);
@@ -29,11 +35,9 @@ body {
   position: relative;
   overflow-x: hidden;
 
-  /* Dreamy Strawberry-Milk Glow + Animated Drifting Strawberries */
   background-color: var(--milk-bg);
   background-image:
-    /* Layer 1: Repeating SVG pattern of strawberries, matcha leaves & hearts */
-    url("data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3C!-- Little Strawberry --%3E%3Cpath d='M28 22 C23 22, 21 27, 23 32 C25 36, 27 38, 28 38 C29 38, 31 36, 33 32 C35 27, 33 22, 28 22 Z' fill='%23f49bb2' fill-opacity='0.32'/%3E%3Cpath d='M25 22 Q28 25, 31 22 Q28 20, 25 22 Z' fill='%2388c49c' fill-opacity='0.45'/%3E%3Ccircle cx='26.5' cy='27' r='0.9' fill='%23ffffff' fill-opacity='0.75'/%3E%3Ccircle cx='29.5' cy='28' r='0.9' fill='%23ffffff' fill-opacity='0.75'/%3E%3Ccircle cx='28' cy='32' r='0.9' fill='%23ffffff' fill-opacity='0.75'/%3E%3C!-- Little Matcha Leaf --%3E%3Cpath d='M98 86 C98 76, 110 74, 110 84 C110 94, 98 96, 98 86 Z' fill='%2388c49c' fill-opacity='0.3'/%3E%3Cpath d='M98 86 Q104 85, 108 80' stroke='%236ead83' stroke-opacity='0.35' stroke-width='1.2' stroke-linecap='round'/%3E%3C!-- Tiny Pink Heart --%3E%3Cpath d='M95 28 C93.5 26, 90.5 26.5, 90.5 29 C90.5 31.5, 95 34, 95 34 C95 34, 99.5 31.5, 99.5 29 C99.5 26.5, 96.5 26, 95 28 Z' fill='%23f49bb2' fill-opacity='0.28'/%3E%3C!-- Soft Polka Dots --%3E%3Ccircle cx='40' cy='105' r='3' fill='%23f49bb2' fill-opacity='0.24'/%3E%3Ccircle cx='72' cy='60' r='2.5' fill='%2388c49c' fill-opacity='0.24'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M28 22 C23 22, 21 27, 23 32 C25 36, 27 38, 28 38 C29 38, 31 36, 33 32 C35 27, 33 22, 28 22 Z' fill='%23f49bb2' fill-opacity='0.32'/%3E%3Cpath d='M25 22 Q28 25, 31 22 Q28 20, 25 22 Z' fill='%2388c49c' fill-opacity='0.45'/%3E%3Ccircle cx='26.5' cy='27' r='0.9' fill='%23ffffff' fill-opacity='0.75'/%3E%3Ccircle cx='29.5' cy='28' r='0.9' fill='%23ffffff' fill-opacity='0.75'/%3E%3Ccircle cx='28' cy='32' r='0.9' fill='%23ffffff' fill-opacity='0.75'/%3E%3Cpath d='M98 86 C98 76, 110 74, 110 84 C110 94, 98 96, 98 86 Z' fill='%2388c49c' fill-opacity='0.3'/%3E%3Cpath d='M98 86 Q104 85, 108 80' stroke='%236ead83' stroke-opacity='0.35' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M95 28 C93.5 26, 90.5 26.5, 90.5 29 C90.5 31.5, 95 34, 95 34 C95 34, 99.5 31.5, 99.5 29 C99.5 26.5, 96.5 26, 95 28 Z' fill='%23f49bb2' fill-opacity='0.28'/%3E%3Ccircle cx='40' cy='105' r='3' fill='%23f49bb2' fill-opacity='0.24'/%3E%3Ccircle cx='72' cy='60' r='2.5' fill='%2388c49c' fill-opacity='0.24'/%3E%3C/g%3E%3C/svg%3E"),
     radial-gradient(circle at 12% 15%, rgba(255, 182, 203, 0.58) 0%, transparent 45%),
     radial-gradient(circle at 88% 22%, rgba(255, 198, 214, 0.52) 0%, transparent 48%),
     radial-gradient(circle at 82% 85%, rgba(164, 219, 182, 0.48) 0%, transparent 50%),
@@ -53,7 +57,6 @@ body {
   }
 }
 
-/* Second floating layer of cute bobbing strawberries & leaves on the sides */
 body::before,
 body::after {
   position: fixed;
@@ -88,14 +91,9 @@ body::after {
   }
 }
 
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 780px;
-  margin: auto;
-  padding: 26px 18px 60px;
-}
-
+/* ======================================
+   3. BASE TYPOGRAPHY & CONTAINER
+   ====================================== */
 button, input, select {
   font: inherit;
 }
@@ -119,12 +117,13 @@ button:active {
 }
 
 .container {
+  position: relative;
+  z-index: 1;
   max-width: 780px;
   margin: auto;
   padding: 26px 18px 60px;
 }
 
-/* Header */
 header {
   margin-bottom: 22px;
 }
@@ -142,7 +141,7 @@ header {
 .heart {
   font-size: 26px;
   color: var(--strawberry);
-  filter: drop-shadow(0 2px 6px rgba(244, 164, 184, 0.45));
+  filter: drop-shadow(0 2px 6px rgba(244, 155, 178, 0.45));
 }
 
 h1 {
@@ -172,7 +171,9 @@ h2 {
   margin: 0;
 }
 
-/* Cards */
+/* ======================================
+   4. CARDS & PROGRESS SECTION
+   ====================================== */
 .card {
   background: var(--card);
   border-radius: 22px;
@@ -182,7 +183,6 @@ h2 {
   box-shadow: 0 8px 26px rgba(136, 196, 156, 0.11);
 }
 
-/* Progress Card & Cute Strawberry Matcha Illustration */
 .progress-card {
   background: linear-gradient(135deg, #ffffff 0%, #fffbfd 60%, #f5fbf7 100%);
   border-color: var(--strawberry-border);
@@ -194,7 +194,9 @@ h2 {
   gap: 18px;
 }
 
+/* Big Mascot Cup on Left */
 .drink-illustration {
+  position: relative;
   flex-shrink: 0;
   width: 78px;
   height: 100px;
@@ -203,13 +205,21 @@ h2 {
   justify-content: center;
   background: radial-gradient(circle, var(--strawberry-soft) 0%, transparent 70%);
   border-radius: 18px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease;
+}
+
+.drink-illustration:hover {
+  transform: scale(1.05);
 }
 
 .matcha-cup-svg {
   width: 100%;
   height: 100%;
   animation: floatCup 3.4s ease-in-out infinite;
-  filter: drop-shadow(0 5px 10px rgba(244, 164, 184, 0.25));
+  filter: drop-shadow(0 5px 10px rgba(244, 155, 178, 0.25));
 }
 
 @keyframes floatCup {
@@ -217,6 +227,46 @@ h2 {
   50% { transform: translateY(-5px) rotate(1.5deg); }
 }
 
+.drink-illustration.sip-bounce .matcha-cup-svg {
+  animation: cupSipWiggle 0.6s ease;
+}
+
+@keyframes cupSipWiggle {
+  0%   { transform: scale(1) rotate(0deg); }
+  25%  { transform: scale(1.12, 0.92) rotate(-8deg); }
+  50%  { transform: scale(0.95, 1.08) rotate(8deg); }
+  75%  { transform: scale(1.04, 0.98) rotate(-4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.cup-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.cup-bubble {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  font-size: 14px;
+  pointer-events: none;
+  animation: popBubble 0.9s ease-out forwards;
+}
+
+@keyframes popBubble {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), -42px) scale(1.25);
+  }
+}
+
+/* Right Side Progress Details & Mini Filling Cup */
 .progress-details {
   flex: 1;
   min-width: 0;
@@ -225,13 +275,37 @@ h2 {
 .progress-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-cup-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--strawberry-soft);
+  padding: 4px 11px 4px 8px;
+  border-radius: 16px;
+  border: 1px solid var(--strawberry-border);
+}
+
+.mini-fill-cup {
+  width: 26px;
+  height: 32px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(244, 155, 178, 0.25));
+}
+
+#cupLiquidLevel {
+  transition: y 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+              height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 #percentage {
-  font-size: 28px;
+  font-size: 24px;
   color: var(--strawberry-dark);
   font-weight: 700;
+  line-height: 1;
 }
 
 .progress-track {
@@ -269,7 +343,9 @@ h2 {
   border-radius: 999px;
 }
 
-/* Buttons */
+/* ======================================
+   5. BUTTONS, SEARCH & INPUTS
+   ====================================== */
 .primary {
   background: var(--matcha);
   color: white;
@@ -300,7 +376,6 @@ h2 {
   background: #dff0e5;
 }
 
-/* Search & Add Toolbar */
 .toolbar {
   display: flex;
   gap: 10px;
@@ -335,7 +410,9 @@ label {
   font-weight: 600;
 }
 
-/* Horizontal Swipeable Category Tabs */
+/* ======================================
+   6. HORIZONTAL SWIPEABLE CATEGORY TABS
+   ====================================== */
 .categories {
   display: flex;
   flex-wrap: nowrap;
@@ -397,7 +474,9 @@ label {
   color: white;
 }
 
-/* Separate Grouped Category Cards */
+/* ======================================
+   7. GROUPED CATEGORY CARDS & ITEMS
+   ====================================== */
 .grouped-list {
   display: flex;
   flex-direction: column;
@@ -413,7 +492,6 @@ label {
   box-shadow: 0 6px 20px rgba(136, 196, 156, 0.08);
 }
 
-/* Alternate gentle Strawberry and Matcha top borders on category cards */
 .category-group-card:nth-child(odd) {
   border-top: 4px solid var(--matcha);
 }
@@ -458,7 +536,6 @@ label {
   color: var(--strawberry-dark);
 }
 
-/* Individual Checklist Items */
 .item {
   display: flex;
   align-items: center;
@@ -521,7 +598,9 @@ label {
   border: 1.5px dashed var(--strawberry-border);
 }
 
-/* Symmetrical Bottom Options Section */
+/* ======================================
+   8. SYMMETRICAL BOTTOM OPTIONS & MODAL
+   ====================================== */
 .options-card h3 {
   margin: 0 0 4px;
   font-size: 16px;
@@ -540,7 +619,6 @@ label {
   justify-content: center;
 }
 
-/* Modal */
 .modal {
   position: fixed;
   inset: 0;
@@ -578,7 +656,6 @@ label {
   margin-top: 12px;
 }
 
-/* Status Toast */
 .status {
   position: fixed;
   bottom: 22px;
@@ -610,6 +687,9 @@ footer {
   margin-top: 28px;
 }
 
+/* ======================================
+   9. MOBILE & PRINT RESPONSIVENESS
+   ====================================== */
 @media (max-width: 550px) {
   .container {
     padding: 20px 14px 45px;
@@ -621,11 +701,14 @@ footer {
   }
 
   .drink-illustration {
-    width: 66px;
-    height: 88px;
+    width: 68px;
+    height: 90px;
   }
 
-  /* Keep Search & Add clean, and keep bottom buttons strictly 50/50 symmetrical */
+  #percentage {
+    font-size: 20px;
+  }
+
   .options-grid {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
@@ -637,6 +720,8 @@ footer {
     background: white;
   }
 
+  body::before,
+  body::after,
   .toolbar,
   .categories,
   .item-actions,

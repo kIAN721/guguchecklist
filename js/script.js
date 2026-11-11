@@ -34,7 +34,7 @@ const STORAGE_KEY = "gugu_dorm_checklist_v4";
 
 
 // ======================================
-// 2. CATEGORIES, ICONS & CUSTOM DEFAULT ITEMS
+// 2. CATEGORIES, ICONS & 54 CUSTOM ITEMS
 // ======================================
 
 const categoryNames = [
@@ -143,7 +143,6 @@ const starterItems = [
 
 function sortItems(listToSort) {
   listToSort.sort((a, b) => {
-    // 1. Group by category order first
     const catA = categoryNames.indexOf(a.category);
     const catB = categoryNames.indexOf(b.category);
 
@@ -154,12 +153,10 @@ function sortItems(listToSort) {
       return validCatA - validCatB;
     }
 
-    // 2. Keep unchecked items above checked items
     if (Boolean(a.done) !== Boolean(b.done)) {
       return a.done ? 1 : -1;
     }
 
-    // 3. Sort alphabetically by item name
     const nameA = (a.name || "").trim();
     const nameB = (b.name || "").trim();
 
@@ -221,7 +218,6 @@ if (activityText) {
   activityText.textContent = "Connecting to cloud sync... ♡";
 }
 
-// Sort, save locally, and sync to Firebase Cloud
 async function saveAndSync() {
   sortItems(items);
 
@@ -254,7 +250,6 @@ async function saveAndSync() {
   }
 }
 
-// Listen for live changes from any phone
 onSnapshot(
   sharedDocRef,
   snapshot => {
@@ -290,6 +285,8 @@ onSnapshot(
 
 function showStatus(message) {
   const status = $("status");
+  if (!status) return;
+
   status.textContent = message;
   status.classList.add("show");
 
@@ -301,7 +298,7 @@ function showStatus(message) {
 
 
 // ======================================
-// 6. RENDER HORIZONTAL TABS & GROUPED CATEGORY CARDS
+// 6. RENDER TABS & GROUPED CATEGORY CARDS
 // ======================================
 
 function renderCategories() {
@@ -401,7 +398,6 @@ function renderItems() {
     return;
   }
 
-  // Group into separate Category Cards
   const categoriesToShow = activeCategory === "All"
     ? categoryNames
     : [activeCategory];
@@ -446,7 +442,7 @@ function renderItems() {
 
 
 // ======================================
-// 7. PROGRESS BAR
+// 7. PROGRESS BAR & INTERACTIVE CUPS
 // ======================================
 
 function updateProgress() {
@@ -457,6 +453,69 @@ function updateProgress() {
   $("percentage").textContent = percentage + "%";
   $("progress").style.width = percentage + "%";
   $("progressText").textContent = `${completed} of ${total} items completed`;
+
+  // Fill the Mini Glass next to percentage (bottom y=41 to top y=11, maxHeight=30)
+  const liquidRect = $("cupLiquidLevel");
+  if (liquidRect) {
+    const maxHeight = 30;
+    const fillHeight = percentage === 0 ? 0 : Math.max(3, Math.round((percentage / 100) * maxHeight));
+    const newY = 41 - fillHeight;
+
+    liquidRect.setAttribute("y", String(newY));
+    liquidRect.setAttribute("height", String(fillHeight));
+  }
+
+  // Switch the big Mascot Cup's face to super happy (^ ◡ ^) at 100%!
+  const normalFace = $("cupFaceNormal");
+  const happyFace = $("cupFaceHappy");
+  if (normalFace && happyFace) {
+    if (percentage === 100) {
+      normalFace.style.display = "none";
+      happyFace.style.display = "block";
+    } else {
+      normalFace.style.display = "block";
+      happyFace.style.display = "none";
+    }
+  }
+}
+
+const drinkCup = $("drinkCup");
+if (drinkCup) {
+  drinkCup.addEventListener("click", () => {
+    drinkCup.classList.remove("sip-bounce");
+    void drinkCup.offsetWidth;
+    drinkCup.classList.add("sip-bounce");
+
+    const sparkles = $("cupSparkles");
+    if (sparkles) {
+      const icons = ["🍓", "🍵", "♡", "✨"];
+      for (let i = 0; i < 3; i++) {
+        const span = document.createElement("span");
+        span.className = "cup-bubble";
+        span.textContent = icons[(i + Math.floor(Math.random() * icons.length)) % icons.length];
+        const dx = (Math.random() * 44 - 22).toFixed(0) + "px";
+        span.style.setProperty("--dx", dx);
+        sparkles.appendChild(span);
+        setTimeout(() => span.remove(), 900);
+      }
+    }
+
+    const total = items.length;
+    const completed = items.filter(item => item.done).length;
+    const pct = total ? Math.round((completed / total) * 100) : 0;
+
+    if (pct === 0) {
+      showStatus("Sipping Strawberry Matcha! Let's start packing 🍓🥛🍵");
+    } else if (pct < 35) {
+      showStatus(`Sweet strawberry base poured! (${pct}% packed) 🍓`);
+    } else if (pct < 70) {
+      showStatus(`Creamy milk & ice added! (${pct}% packed) 🥛🍓`);
+    } else if (pct < 100) {
+      showStatus(`Almost there! Whisking the matcha top (${pct}% packed) 🍵🍓`);
+    } else {
+      showStatus("100% Packed! Enjoy your Strawberry Matcha Latte! 🍓🍵♡");
+    }
+  });
 }
 
 
