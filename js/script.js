@@ -2,16 +2,17 @@ import { initializeApp } from
   "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 
 import {
-  getFirestore,
+  initializeFirestore,
   doc,
   setDoc,
+  getDoc,
   onSnapshot
 } from
   "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 
 // ======================================
-// 1. FIREBASE CLOUD CONFIGURATION
+// 1. FIREBASE CLOUD CONFIG (WITH LONG POLLING FOR MYANMAR NETWORKS)
 // ======================================
 
 const firebaseConfig = {
@@ -24,11 +25,15 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
-// Single cloud document that holds the entire checklist for all phones
-const sharedDocRef = doc(db, "shared_checklists", "gugu_main_list");
-const STORAGE_KEY = "gugu_dorm_checklist_v1";
+// Force HTTP Long Polling so mobile data & Wi-Fi don't block real-time sync
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true
+});
+
+// Single cloud document shared by all phones
+const sharedDocRef = doc(db, "rooms", "gugu_shared_main");
+const STORAGE_KEY = "gugu_dorm_checklist_v2";
 
 
 // ======================================
@@ -161,6 +166,12 @@ const search = $("search");
 const modal = $("modal");
 const itemInput = $("itemInput");
 const categoryInput = $("categoryInput");
+const activityText = $("activityText");
+
+// Immediately update text on load so we know v5 is active!
+if (activityText) {
+  activityText.textContent = "Connecting to cloud sync... ♡";
+}
 
 // Save changes to both phone storage AND Firebase Cloud
 async function saveAndSync() {
@@ -175,18 +186,25 @@ async function saveAndSync() {
   updateProgress();
 
   try {
+    if (activityText) activityText.textContent = "Saving to cloud... ♡";
+
     await setDoc(sharedDocRef, {
       items,
       updatedAt: new Date().toISOString()
     });
-    $("activityText").textContent = "Synced across all phones ♡";
+
+    if (activityText) {
+      activityText.textContent = "Live synced across all phones ♡";
+    }
   } catch (err) {
-    console.warn("Cloud sync waiting for Firestore rules:", err.message);
-    $("activityText").textContent = "Saved on this device ♡";
+    console.error("Cloud Sync Error:", err);
+    if (activityText) {
+      activityText.textContent = "Cloud Error: " + (err.code || err.message);
+    }
   }
 }
 
-// Listen for live changes when someone adds/checks an item on another phone
+// Listen for live changes from any phone
 onSnapshot(
   sharedDocRef,
   snapshot => {
@@ -198,15 +216,20 @@ onSnapshot(
         renderCategories();
         renderItems();
         updateProgress();
-        $("activityText").textContent = "Live synced across all phones ♡";
+        if (activityText) {
+          activityText.textContent = "Live synced across all phones ♡";
+        }
       }
     } else {
-      // First time connecting to cloud: upload the 59 default items
+      // First time ever: upload the list to cloud
       saveAndSync();
     }
   },
   err => {
-    console.warn("Using local mode until Firestore rules allow public read/write:", err.message);
+    console.error("Snapshot Error:", err);
+    if (activityText) {
+      activityText.textContent = "Sync Blocked: " + (err.code || err.message);
+    }
   }
 );
 
@@ -281,6 +304,7 @@ function renderItems() {
     checkbox.addEventListener("change", () => {
       item.done = checkbox.checked;
       saveAndSync();
+      showStatus(item.done ? "Checked! ♡" : "Unchecked");
     });
 
     const details = document.createElement("div");
