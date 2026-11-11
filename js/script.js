@@ -125,17 +125,12 @@ const starterItems = [
 
 
 // ======================================
-// 3. AUTOMATIC SORTING FUNCTION
+// 3. AUTOMATIC SORTING BY CATEGORY & NAME
 // ======================================
 
 function sortItems(listToSort) {
   listToSort.sort((a, b) => {
-    // 1. Put unchecked items at the top, and checked (done) items at the bottom
-    if (Boolean(a.done) !== Boolean(b.done)) {
-      return a.done ? 1 : -1;
-    }
-
-    // 2. Group by category order (Bedding -> Clothing -> Toiletries...)
+    // 1. Group by category order first (Bedding -> Clothing -> Toiletries...)
     const catA = categoryNames.indexOf(a.category);
     const catB = categoryNames.indexOf(b.category);
 
@@ -146,8 +141,17 @@ function sortItems(listToSort) {
       return validCatA - validCatB;
     }
 
-    // 3. Sort alphabetically A-Z (and Burmese က-အ) inside the same category
-    return (a.name || "").localeCompare(b.name || "", undefined, {
+    // 2. Inside each category, keep unchecked items above checked items
+    if (Boolean(a.done) !== Boolean(b.done)) {
+      return a.done ? 1 : -1;
+    }
+
+    // 3. Sort alphabetically by item name (A-Z, 1-9, and Burmese က-အ)
+    const nameA = (a.name || "").trim();
+    const nameB = (b.name || "").trim();
+
+    return nameA.localeCompare(nameB, undefined, {
+      numeric: true,
       sensitivity: "base"
     });
   });
@@ -315,6 +319,9 @@ function renderItems() {
     (activeCategory === "All" || item.category === activeCategory) &&
     item.name.toLowerCase().includes(query)
   );
+
+  // Also ensure the filtered view is strictly sorted by category & name
+  sortItems(filtered);
 
   $("listTitle").textContent = activeCategory === "All" ? "Your checklist" : activeCategory;
   $("itemCount").textContent = filtered.length + " items";
@@ -490,6 +497,8 @@ $("restoreDefaultBtn").addEventListener("click", () => {
 });
 
 $("downloadBtn").addEventListener("click", () => {
+  sortItems(items);
+
   const content = categoryNames.map(category => {
     const group = items.filter(item => item.category === category);
     if (!group.length) return "";
