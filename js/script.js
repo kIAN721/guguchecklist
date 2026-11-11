@@ -4,21 +4,14 @@ import { initializeApp } from
 import {
   getFirestore,
   doc,
-  getDoc,
   setDoc,
-  updateDoc,
-  deleteDoc,
-  collection,
-  addDoc,
-  onSnapshot,
-  writeBatch,
-  serverTimestamp
+  onSnapshot
 } from
   "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 
 // ======================================
-// 1. FIREBASE CONFIGURATION
+// 1. FIREBASE CLOUD CONFIGURATION
 // ======================================
 
 const firebaseConfig = {
@@ -33,13 +26,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Every phone/browser connects to this exact same cloud checklist!
-const GLOBAL_ROOM_ID = "gugu-shared-checklist";
-const NAME_STORAGE_KEY = "gugu_checklist_username";
+// Single cloud document that holds the entire checklist for all phones
+const sharedDocRef = doc(db, "shared_checklists", "gugu_main_list");
+const STORAGE_KEY = "gugu_dorm_checklist_v1";
 
 
 // ======================================
-// 2. CATEGORIES & DEFAULT ITEMS
+// 2. CATEGORIES & YOUR 59 DEFAULT ITEMS
 // ======================================
 
 const categoryNames = [
@@ -130,11 +123,32 @@ const starterItems = [
 
 
 // ======================================
-// 3. APPLICATION STATE & ELEMENTS
+// 3. BUILD & SYNC ITEMS (LOCAL + CLOUD)
 // ======================================
 
-let currentUserName = localStorage.getItem(NAME_STORAGE_KEY) || "Gu Gu";
-let items = [];
+function buildDefaultList() {
+  return starterItems.map(([category, name], index) => ({
+    id: "item_" + index,
+    category,
+    name,
+    done: false
+  }));
+}
+
+function loadLocalItems() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.warn(e);
+  }
+  return buildDefaultList();
+}
+
+let items = loadLocalItems();
 let activeCategory = "All";
 let editingId = null;
 let statusTimeout = null;
@@ -148,9 +162,57 @@ const modal = $("modal");
 const itemInput = $("itemInput");
 const categoryInput = $("categoryInput");
 
+// Save changes to both phone storage AND Firebase Cloud
+async function saveAndSync() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch (e) {
+    console.warn(e);
+  }
+
+  renderCategories();
+  renderItems();
+  updateProgress();
+
+  try {
+    await setDoc(sharedDocRef, {
+      items,
+      updatedAt: new Date().toISOString()
+    });
+    $("activityText").textContent = "Synced across all phones ♡";
+  } catch (err) {
+    console.warn("Cloud sync waiting for Firestore rules:", err.message);
+    $("activityText").textContent = "Saved on this device ♡";
+  }
+}
+
+// Listen for live changes when someone adds/checks an item on another phone
+onSnapshot(
+  sharedDocRef,
+  snapshot => {
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      if (Array.isArray(data.items) && data.items.length > 0) {
+        items = data.items;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        renderCategories();
+        renderItems();
+        updateProgress();
+        $("activityText").textContent = "Live synced across all phones ♡";
+      }
+    } else {
+      // First time connecting to cloud: upload the 59 default items
+      saveAndSync();
+    }
+  },
+  err => {
+    console.warn("Using local mode until Firestore rules allow public read/write:", err.message);
+  }
+);
+
 
 // ======================================
-// 4. STATUS & ERROR HANDLING
+// 4. STATUS POPUP MESSAGE
 // ======================================
 
 function showStatus(message) {
@@ -161,107 +223,12 @@ function showStatus(message) {
   clearTimeout(statusTimeout);
   statusTimeout = setTimeout(() => {
     status.classList.remove("show");
-  }, 3000);
-}
-
-function handleError(error) {
-  console.error(error);
-  if (error.code === "permission-denied") {
-    showStatus("Please set Firestore Rules to 'allow read, write: if true;' in Firebase Console.");
-  } else {
-    showStatus("Connection problem. Please check your internet.");
-  }
+  }, 2500);
 }
 
 
 // ======================================
-// 5. USER DISPLAY NAME
-// ======================================
-
-function updateNameUI() {
-  $("userName").textContent = currentUserName + " ♡";
-  $("userAvatar").textContent = currentUserName.charAt(0).toUpperCase();
-}
-
-$("changeNameBtn").addEventListener("click", () => {
-  const newName = prompt("Enter your name (shown when you check off items):", currentUserName);
-  if (newName && newName.trim()) {
-    currentUserName = newName.trim();
-    localStorage.setItem(NAME_STORAGE_KEY, currentUserName);
-    updateNameUI();
-    showStatus("Name updated to " + currentUserName + " ♡");
-  }
-});
-
-
-// ======================================
-// 6. AUTO-INITIALIZE GLOBAL CLOUD ROOM
-// ======================================
-
-function roomRef() {
-  return doc(db, "rooms", GLOBAL_ROOM_ID);
-}
-
-function itemsRef() {
-  return collection(db, "rooms", GLOBAL_ROOM_ID, "items");
-}
-
-async function initGlobalChecklist() {
-  updateNameUI();
-
-  try {
-    const snapshot = await getDoc(roomRef());
-
-    // First time ever opening the app: seed the starter items in the cloud
-    if (!snapshot.exists()) {
-      await setDoc(roomRef(), {
-        title: "Our little checklist",
-        createdAt: serverTimestamp()
-      });
-
-      const batch = writeBatch(db);
-      starterItems.forEach(([category, name]) => {
-        const itemDoc = doc(itemsRef());
-        batch.set(itemDoc, {
-          name,
-          category,
-          done: false,
-          updatedByName: currentUserName,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
-      });
-
-      await batch.commit();
-    }
-
-    // Listen to real-time updates from any phone or computer
-    onSnapshot(
-      itemsRef(),
-      snap => {
-        items = snap.docs.map(document => ({
-          id: document.id,
-          ...document.data()
-        }));
-
-        items.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-
-        renderCategories();
-        renderItems();
-        updateProgress();
-        updateActivity();
-      },
-      error => handleError(error)
-    );
-
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-
-// ======================================
-// 7. RENDER CATEGORIES & CHECKLIST
+// 5. RENDER CATEGORIES & CHECKLIST
 // ======================================
 
 function renderCategories() {
@@ -310,10 +277,10 @@ function renderItems() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = !!item.done;
-    checkbox.setAttribute("aria-label", "Mark " + item.name + " complete");
 
     checkbox.addEventListener("change", () => {
-      changeItem(item.id, { done: checkbox.checked });
+      item.done = checkbox.checked;
+      saveAndSync();
     });
 
     const details = document.createElement("div");
@@ -324,7 +291,7 @@ function renderItems() {
 
     const meta = document.createElement("div");
     meta.className = "item-meta";
-    meta.textContent = "Updated by " + (item.updatedByName || "Gu Gu");
+    meta.textContent = item.category;
 
     details.append(name, meta);
 
@@ -339,7 +306,12 @@ function renderItems() {
     const remove = document.createElement("button");
     remove.className = "icon-btn";
     remove.textContent = "Delete";
-    remove.addEventListener("click", () => removeItem(item.id));
+    remove.addEventListener("click", () => {
+      if (!confirm(`Delete "${item.name}"?`)) return;
+      items = items.filter(i => i.id !== item.id);
+      saveAndSync();
+      showStatus("Item deleted.");
+    });
 
     actions.append(edit, remove);
     row.append(checkbox, details, actions);
@@ -349,7 +321,7 @@ function renderItems() {
 
 
 // ======================================
-// 8. PROGRESS BAR
+// 6. PROGRESS BAR
 // ======================================
 
 function updateProgress() {
@@ -364,7 +336,7 @@ function updateProgress() {
 
 
 // ======================================
-// 9. ADD / EDIT / DELETE ITEMS
+// 7. ADD / EDIT ITEM MODAL
 // ======================================
 
 function openModal(id = null) {
@@ -408,7 +380,7 @@ itemInput.addEventListener("keydown", event => {
   if (event.key === "Enter") saveItem();
 });
 
-async function saveItem() {
+function saveItem() {
   const name = itemInput.value.trim();
   const category = categoryInput.value;
 
@@ -417,120 +389,46 @@ async function saveItem() {
     return;
   }
 
-  try {
-    $("saveBtn").disabled = true;
-
-    if (editingId) {
-      await changeItem(editingId, { name, category }, false);
-    } else {
-      await addDoc(itemsRef(), {
-        name,
-        category,
-        done: false,
-        updatedByName: currentUserName,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
+  if (editingId) {
+    const target = items.find(i => i.id === editingId);
+    if (target) {
+      target.name = name;
+      target.category = category;
     }
-
-    closeModal();
-    showStatus(editingId ? "Item updated! ♡" : "New item added! ♡");
-  } catch (error) {
-    handleError(error);
-  } finally {
-    $("saveBtn").disabled = false;
-  }
-}
-
-async function changeItem(id, changes, notify = true) {
-  try {
-    const itemDocument = doc(db, "rooms", GLOBAL_ROOM_ID, "items", id);
-    await updateDoc(itemDocument, {
-      ...changes,
-      updatedByName: currentUserName,
-      updatedAt: serverTimestamp()
+    showStatus("Item updated! ♡");
+  } else {
+    items.push({
+      id: "item_" + Date.now(),
+      name,
+      category,
+      done: false
     });
-
-    if (notify) showStatus("Saved! ♡");
-  } catch (error) {
-    handleError(error);
+    showStatus("New item added! ♡");
   }
-}
 
-async function removeItem(id) {
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-
-  if (!confirm(`Delete "${item.name}"?`)) return;
-
-  try {
-    await deleteDoc(doc(db, "rooms", GLOBAL_ROOM_ID, "items", id));
-    showStatus("Item deleted.");
-  } catch (error) {
-    handleError(error);
-  }
+  closeModal();
+  saveAndSync();
 }
 
 
 // ======================================
-// 10. GLOBAL RESETS, SEARCH & DOWNLOAD
+// 8. BUTTONS: SEARCH, RESET, DOWNLOAD, PRINT
 // ======================================
 
 search.addEventListener("input", renderItems);
 
-// Uncheck all items
-$("resetBtn").addEventListener("click", async () => {
-  if (!confirm("Uncheck ALL items in this checklist?")) return;
-
-  try {
-    const batch = writeBatch(db);
-    items
-      .filter(item => item.done)
-      .forEach(item => {
-        batch.update(doc(db, "rooms", GLOBAL_ROOM_ID, "items", item.id), {
-          done: false,
-          updatedByName: currentUserName,
-          updatedAt: serverTimestamp()
-        });
-      });
-
-    await batch.commit();
-    showStatus("All items unchecked! ♡");
-  } catch (error) {
-    handleError(error);
-  }
+$("resetBtn").addEventListener("click", () => {
+  if (!confirm("Uncheck ALL items?")) return;
+  items.forEach(item => { item.done = false; });
+  saveAndSync();
+  showStatus("All items unchecked! ♡");
 });
 
-// Global Reset: Restores all original starter items
-$("restoreDefaultBtn").addEventListener("click", async () => {
-  if (!confirm("Global Reset: Restore all original default items and uncheck everything?")) {
-    return;
-  }
-
-  try {
-    const batch = writeBatch(db);
-
-    items.forEach(item => {
-      batch.delete(doc(db, "rooms", GLOBAL_ROOM_ID, "items", item.id));
-    });
-
-    starterItems.forEach(([category, name]) => {
-      const newItemRef = doc(itemsRef());
-      batch.set(newItemRef, {
-        name,
-        category,
-        done: false,
-        updatedByName: currentUserName,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-    });
-
-    await batch.commit();
-    showStatus("Checklist completely reset to default! ♡");
-  } catch (error) {
-    handleError(error);
-  }
+$("restoreDefaultBtn").addEventListener("click", () => {
+  if (!confirm("Restore all 59 original default items?")) return;
+  items = buildDefaultList();
+  saveAndSync();
+  showStatus("Default checklist restored! ♡");
 });
 
 $("downloadBtn").addEventListener("click", () => {
@@ -557,24 +455,7 @@ $("printBtn").addEventListener("click", () => {
   window.print();
 });
 
-function updateActivity() {
-  const latest = [...items].sort((a, b) => {
-    const aTime = a.updatedAt?.toMillis?.() || 0;
-    const bTime = b.updatedAt?.toMillis?.() || 0;
-    return bTime - aTime;
-  })[0];
-
-  if (!latest) {
-    $("activityText").textContent = "No activity yet.";
-    return;
-  }
-
-  const date = latest.updatedAt?.toDate?.();
-
-  $("activityText").textContent =
-    `Last update: ${latest.updatedByName || "Gu Gu"} — ${latest.name}` +
-    (date ? " · " + date.toLocaleString() : "");
-}
-
-// Start immediately on page load!
-initGlobalChecklist();
+// Render all 59 items immediately on startup!
+renderCategories();
+renderItems();
+updateProgress();

@@ -28,28 +28,10 @@
       </p>
     </header>
 
-    <!-- MAIN APP (OPENS DIRECTLY ON ANY DEVICE) -->
+    <!-- MAIN APP (SHOWS IMMEDIATELY) -->
     <section id="appScreen">
 
-      <!-- WHO IS PACKING BAR -->
-      <div class="user-bar card">
-        <div class="user-info">
-          <div id="userAvatar" style="width: 43px; height: 43px; border-radius: 50%; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; flex-shrink: 0;">
-            ♡
-          </div>
-          <div>
-            <strong id="userName">Gu Gu ♡</strong>
-            <p class="small">Synced across all devices automatically</p>
-          </div>
-        </div>
-
-        <button id="changeNameBtn" class="secondary" style="padding: 8px 12px; font-size: 12px;">
-          Change Name
-        </button>
-      </div>
-
-      <!-- CHECKLIST DASHBOARD -->
-      <section id="dashboard">
+      <div class="dashboard">
 
         <!-- Progress -->
         <div class="card">
@@ -63,7 +45,7 @@
           </div>
 
           <p id="progressText" class="small">
-            Loading your shared checklist...
+            0 of 0 items completed
           </p>
         </div>
 
@@ -93,11 +75,11 @@
           <div id="list"></div>
         </div>
 
-        <!-- Activity & Global Controls -->
+        <!-- Controls -->
         <div class="card">
-          <h3>Room activity</h3>
+          <h3>Checklist Options</h3>
           <p id="activityText" class="small">
-            Waiting for updates...
+            Items are automatically saved ♡
           </p>
 
           <div class="toolbar">
@@ -106,7 +88,7 @@
             </button>
 
             <button id="restoreDefaultBtn" class="secondary">
-              Global Reset
+              Reset to Default
             </button>
 
             <button id="downloadBtn" class="secondary">
@@ -119,7 +101,7 @@
           </div>
         </div>
 
-      </section>
+      </div>
     </section>
 
     <div id="status" class="status" role="status"></div>
