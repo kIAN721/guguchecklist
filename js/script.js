@@ -34,6 +34,105 @@ const STORAGE_KEY = "gugu_dorm_checklist_v4";
 
 
 // ======================================
+// 1B. CUTE BUILT-IN CAFE SOUND EFFECTS (WEB AUDIO API)
+// ======================================
+
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+    }
+  }
+  if (audioCtx && audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+// Helper to play a single soft musical note
+function playTone(freq, type, startTime, duration, maxGain = 0.14) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, startTime);
+
+  gain.gain.setValueAtTime(0.001, startTime);
+  gain.gain.linearRampToValueAtTime(maxGain, startTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(startTime);
+  osc.stop(startTime + duration);
+}
+
+// Sound 1: Cute bubbly sip + sparkle chime when tapping the cup
+function playCupSipSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  // Little rising bubble pop (pitch slide)
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(320, now);
+  osc.frequency.exponentialRampToValueAtTime(780, now + 0.11);
+
+  gain.gain.setValueAtTime(0.001, now);
+  gain.gain.linearRampToValueAtTime(0.16, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.13);
+
+  // Sweet 3-note cafe chime right after the bubble pop
+  playTone(587.33, "sine", now + 0.09, 0.18, 0.11); // D5
+  playTone(783.99, "sine", now + 0.16, 0.20, 0.11); // G5
+  playTone(987.77, "triangle", now + 0.23, 0.30, 0.12); // B5
+}
+
+// Sound 2: Cheerful chime when checking an item off the list
+function playCheckSound(isAllDone = false) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  if (isAllDone) {
+    // Special 4-note celebration melody when 100% packed!
+    playTone(523.25, "triangle", now,        0.16, 0.13); // C5
+    playTone(659.25, "triangle", now + 0.09, 0.16, 0.13); // E5
+    playTone(783.99, "triangle", now + 0.18, 0.18, 0.13); // G5
+    playTone(1046.50, "sine",    now + 0.27, 0.42, 0.16); // C6
+  } else {
+    // Crisp 2-note "ding!" sparkle
+    playTone(659.25, "sine",     now,        0.16, 0.13); // E5
+    playTone(987.77, "triangle", now + 0.08, 0.26, 0.14); // B5
+  }
+}
+
+// Sound 3: Soft gentle pop when unchecking an item
+function playUncheckSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  playTone(523.25, "sine", now,        0.12, 0.09); // C5
+  playTone(392.00, "sine", now + 0.06, 0.16, 0.08); // G4
+}
+
+
+// ======================================
 // 2. CATEGORIES, ICONS & 54 CUSTOM ITEMS
 // ======================================
 
@@ -204,6 +303,7 @@ let activeCategory = "All";
 let editingId = null;
 let statusTimeout = null;
 let faceTimeout = null;
+let bounceTimeout = null;
 
 const $ = id => document.getElementById(id);
 
@@ -345,11 +445,15 @@ function createItemRow(item) {
   checkbox.addEventListener("change", () => {
     item.done = checkbox.checked;
     saveAndSync();
+
     if (item.done) {
+      const allDone = items.length > 0 && items.every(i => i.done);
+      playCheckSound(allDone);
       spawnCupBubbles(3);
       triggerHappyCupFace(1200);
-      showStatus("Checked! 🍓♡");
+      showStatus(allDone ? "100% Packed! Yay! 🍓🍵♡" : "Checked! 🍓♡");
     } else {
+      playUncheckSound();
       showStatus("Unchecked");
     }
   });
@@ -537,13 +641,28 @@ setInterval(() => {
   spawnCupBubbles(1);
 }, 2200);
 
-// 2. TAP-INTERACTIVE: Wiggle, happy eyes, burst of 6 bubbles & sweet message when she taps!
+// 2. TAP-INTERACTIVE: Play Sip Chime, Wiggle, Return to Normal Sway, & Pop 6 Bubbles!
 const drinkCup = $("drinkCup");
 if (drinkCup) {
+  // Automatically remove .sip-bounce as soon as the 0.65s wiggle finishes so it resumes swaying!
+  drinkCup.addEventListener("animationend", event => {
+    if (event.animationName === "cupSipWiggle") {
+      drinkCup.classList.remove("sip-bounce");
+    }
+  });
+
   drinkCup.addEventListener("click", () => {
+    playCupSipSound();
+
     drinkCup.classList.remove("sip-bounce");
     void drinkCup.offsetWidth;
     drinkCup.classList.add("sip-bounce");
+
+    // Fallback timer to guarantee .sip-bounce is removed after 660ms so swaying never freezes
+    clearTimeout(bounceTimeout);
+    bounceTimeout = setTimeout(() => {
+      drinkCup.classList.remove("sip-bounce");
+    }, 660);
 
     spawnCupBubbles(6);
     triggerHappyCupFace(1600);
@@ -627,6 +746,7 @@ function saveItem() {
       target.name = name;
       target.category = category;
     }
+    playCheckSound(false);
     showStatus("Item updated! ♡");
   } else {
     items.push({
@@ -635,6 +755,7 @@ function saveItem() {
       category,
       done: false
     });
+    playCheckSound(false);
     showStatus("New item added! 🍓♡");
   }
 
@@ -653,6 +774,7 @@ if ($("resetBtn")) {
   $("resetBtn").addEventListener("click", () => {
     if (!confirm("Uncheck ALL items?")) return;
     items.forEach(item => { item.done = false; });
+    playUncheckSound();
     saveAndSync();
     showStatus("All items unchecked! ♡");
   });
